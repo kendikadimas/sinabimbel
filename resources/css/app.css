@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        font-family: 'Plus Jakarta Sans', 'Poppins', sans-serif;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+}
+
+:root {
+    --primary-purple: #7B3FE4;
+    --accent-yellow: #FFC93C;
+    --accent-pink: #FF4FA3;
+    --accent-red: #E8453C;
+    --text-navy: #1B3A6B;
+    --text-green: #2E9E4F;
+    --neutral-bg: #F7F4FF;
+    --neutral-dark: #1F1F2E;
+}
+
+.bg-sina-purple { background-color: #7B3FE4; }
+.bg-sina-yellow { background-color: #FFC93C; }
+.bg-sina-pink { background-color: #FF4FA3; }
+.bg-sina-red { background-color: #E8453C; }
+.bg-sina-navy { background-color: #1B3A6B; }
+.bg-sina-green { background-color: #2E9E4F; }
+.bg-sina-light { background-color: #F7F4FF; }
+
+.text-sina-purple { color: #7B3FE4; }
+.text-sina-yellow { color: #FFC93C; }
+.text-sina-pink { color: #FF4FA3; }
+.text-sina-red { color: #E8453C; }
+.text-sina-navy { color: #1B3A6B; }
+.text-sina-green { color: #2E9E4F; }
+.text-sina-dark { color: #1F1F2E; }
+
+.border-sina-purple { border-color: #7B3FE4; }
+.border-sina-yellow { border-color: #FFC93C; }
+.border-sina-pink { border-color: #FF4FA3; }
+
+/* Custom shadow utilities matching Eduvance aesthetic */
+.shadow-eduvance {
+    box-shadow: 0 10px 30px -10px rgba(123, 63, 228, 0.12);
+}
+
+.shadow-eduvance-yellow {
+    box-shadow: 0 14px 35px -10px rgba(255, 201, 60, 0.4);
+}
+
+.shadow-eduvance-card {
+    box-shadow: 0 8px 24px rgba(27, 58, 107, 0.06);
+}
+
+/* ---------- Soft / eye-friendly dashboard tokens ---------- */
+
+@layer base {
+    :root {
+        --soft-bg: #f7f7fb;
+        --soft-ink: #1e293b;
+        --soft-muted: #64748b;
+        --soft-line: #eef0f6;
+        --brand: #2563eb;
+        --brand-soft: #dbeafe;
+    }
+
+    .bg-soft { background-color: var(--soft-bg); }
+    .text-ink { color: var(--soft-ink); }
+    .text-soft-muted { color: var(--soft-muted); }
+}
+
+.shadow-soft {
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04),
+        0 8px 24px -12px rgba(15, 23, 42, 0.08);
+}
+
+.shadow-soft-lg {
+    box-shadow: 0 2px 4px rgba(15, 23, 42, 0.05),
+        0 16px 40px -16px rgba(15, 23, 42, 0.14);
+}
+
+/* Auth input styling */
+.auth-input {
+    border: 1px solid var(--soft-line);
+    background: #fff;
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: var(--soft-ink);
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.auth-input:focus {
+    border-color: var(--brand);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.auth-input::placeholder {
+    color: #a3aec2;
+}
+
+/* Doodle SVG Decorations */
+.doodle-swirl {
+    background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 60 Q 30 10, 60 60 T 110 60' stroke='%23FFC93C' stroke-width='4' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+}
+
+/* Custom Accordion & Card transitions */
+.transition-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-card:hover {
+    transform: translateY(-5px);
+}
