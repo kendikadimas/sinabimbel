@@ -6,7 +6,7 @@ use App\Models\Fee;
 use App\Models\NotifikasiWa;
 use App\Models\PaketSesi;
 use App\Models\Presensi;
-use App\Models\RateTutor;
+use App\Models\RateKelas;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -48,16 +48,10 @@ class AdminBimbelTest extends TestCase
                 'name' => 'Tutor Baru',
                 'email' => 'baru@test.dev',
                 'password' => 'rahasia123',
-                'nominal_per_jam' => 45000,
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('users', ['email' => 'baru@test.dev', 'role' => 'tutor']);
-        $tutor = User::where('email', 'baru@test.dev')->first();
-        $this->assertDatabaseHas('rate_tutor', [
-            'user_id' => $tutor->id,
-            'nominal_per_jam' => 45000,
-        ]);
     }
 
     public function test_admin_tambah_siswa_dengan_paket(): void
@@ -93,22 +87,32 @@ class AdminBimbelTest extends TestCase
             ->assertHeader('content-type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     }
 
-    public function test_rate_bisa_diubah_admin(): void
+    public function test_rate_kelas_bisa_ditambah_dan_diubah_admin(): void
     {
-        $tutor = $this->tutor();
-        RateTutor::create(['user_id' => $tutor->id, 'nominal_per_jam' => 40000]);
-
         $this->actingAs($this->admin())
-            ->patch(route('admin.tutor.update', $tutor->id), [
-                'name' => $tutor->name,
-                'email' => $tutor->email,
-                'nominal_per_jam' => 55000,
+            ->post(route('admin.rate-kelas.store'), [
+                'kelas' => '10 SMA',
+                'nominal_per_jam' => 60000,
             ])
             ->assertRedirect();
 
-        $this->assertDatabaseHas('rate_tutor', [
-            'user_id' => $tutor->id,
-            'nominal_per_jam' => 55000,
+        $this->assertDatabaseHas('rate_kelas', [
+            'kelas' => '10 SMA',
+            'nominal_per_jam' => 60000,
+        ]);
+
+        $rk = RateKelas::where('kelas', '10 SMA')->first();
+
+        $this->actingAs($this->admin())
+            ->patch(route('admin.rate-kelas.update', $rk->id), [
+                'kelas' => '10 SMA',
+                'nominal_per_jam' => 65000,
+            ])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('rate_kelas', [
+            'kelas' => '10 SMA',
+            'nominal_per_jam' => 65000,
         ]);
     }
 
@@ -197,7 +201,6 @@ class AdminBimbelTest extends TestCase
     public function test_admin_koreksi_presensi_menghitung_ulang_fee(): void
     {
         $tutor = $this->tutor();
-        RateTutor::create(['user_id' => $tutor->id, 'nominal_per_jam' => 40000]);
         $siswa = Siswa::create([
             'nama' => 'Siswa Koreksi',
             'mata_pelajaran' => 'Bahasa Inggris',

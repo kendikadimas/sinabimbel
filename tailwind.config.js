@@ -12,6 +12,13 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                sina: {
+                    blue: '#091142',
+                    green: '#0e4a24',
+                    pink: '#EC4899',
+                },
+            },
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },

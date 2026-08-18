@@ -13,47 +13,41 @@
 }
 
 :root {
-    --primary-purple: #7B3FE4;
-    --accent-yellow: #FFC93C;
-    --accent-pink: #FF4FA3;
-    --accent-red: #E8453C;
-    --text-navy: #1B3A6B;
-    --text-green: #2E9E4F;
-    --neutral-bg: #F7F4FF;
-    --neutral-dark: #1F1F2E;
+    --sina-blue: #091142;
+    --sina-green: #0e4a24;
+    --sina-pink: #EC4899;
+    --primary-blue: #091142;
+    --accent-green: #0e4a24;
+    --accent-pink: #EC4899;
+    --text-navy: #091142;
+    --text-green: #0e4a24;
+    --neutral-bg: #FFFFFF;
+    --neutral-dark: #091142;
 }
 
-.bg-sina-purple { background-color: #7B3FE4; }
-.bg-sina-yellow { background-color: #FFC93C; }
-.bg-sina-pink { background-color: #FF4FA3; }
-.bg-sina-red { background-color: #E8453C; }
-.bg-sina-navy { background-color: #1B3A6B; }
-.bg-sina-green { background-color: #2E9E4F; }
-.bg-sina-light { background-color: #F7F4FF; }
+.bg-sina-blue { background-color: #091142; }
+.bg-sina-green { background-color: #0e4a24; }
+.bg-sina-pink { background-color: #EC4899; }
 
-.text-sina-purple { color: #7B3FE4; }
-.text-sina-yellow { color: #FFC93C; }
-.text-sina-pink { color: #FF4FA3; }
-.text-sina-red { color: #E8453C; }
-.text-sina-navy { color: #1B3A6B; }
-.text-sina-green { color: #2E9E4F; }
-.text-sina-dark { color: #1F1F2E; }
+.text-sina-blue { color: #091142; }
+.text-sina-green { color: #0e4a24; }
+.text-sina-pink { color: #EC4899; }
 
-.border-sina-purple { border-color: #7B3FE4; }
-.border-sina-yellow { border-color: #FFC93C; }
-.border-sina-pink { border-color: #FF4FA3; }
+.border-sina-blue { border-color: #091142; }
+.border-sina-green { border-color: #0e4a24; }
+.border-sina-pink { border-color: #EC4899; }
 
-/* Custom shadow utilities matching Eduvance aesthetic */
-.shadow-eduvance {
-    box-shadow: 0 10px 30px -10px rgba(123, 63, 228, 0.12);
+/* Custom shadow utilities matching Sina aesthetic */
+.shadow-sina-pink {
+    box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.25);
 }
 
-.shadow-eduvance-yellow {
-    box-shadow: 0 14px 35px -10px rgba(255, 201, 60, 0.4);
+.shadow-sina-blue {
+    box-shadow: 0 14px 35px -10px rgba(9, 17, 66, 0.25);
 }
 
-.shadow-eduvance-card {
-    box-shadow: 0 8px 24px rgba(27, 58, 107, 0.06);
+.shadow-sina-card {
+    box-shadow: 0 8px 24px rgba(9, 17, 66, 0.06);
 }
 
 /* ---------- Soft / eye-friendly dashboard tokens ---------- */

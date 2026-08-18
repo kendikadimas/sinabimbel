@@ -36,6 +36,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/tutor/{tutor}', [AdminController::class, 'updateTutor'])->name('tutor.update');
         Route::delete('/tutor/{tutor}', [AdminController::class, 'destroyTutor'])->name('tutor.destroy');
 
+        Route::post('/rate-kelas', [AdminController::class, 'storeRateKelas'])->name('rate-kelas.store');
+        Route::patch('/rate-kelas/{rateKelas}', [AdminController::class, 'updateRateKelas'])->name('rate-kelas.update');
+        Route::delete('/rate-kelas/{rateKelas}', [AdminController::class, 'destroyRateKelas'])->name('rate-kelas.destroy');
+
         Route::get('/siswa', [AdminController::class, 'indexSiswa'])->name('siswa.index');
         Route::post('/siswa', [AdminController::class, 'storeSiswa'])->name('siswa.store');
         Route::get('/siswa/{siswa}', [AdminController::class, 'showSiswa'])->name('siswa.show');

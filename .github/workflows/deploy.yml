@@ -1,0 +1,78 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: mbstring, pdo_mysql, openssl, fileinfo, tokenizer, xml, ctype, json, bcmath
+          coverage: none
+
+      - name: Get Composer cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+
+      - name: Install Composer deps (no dev)
+        run: composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-progress
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install & build frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Prepare SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Test SSH connection
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "echo CONNECTION_OK; php -v | head -1"
+
+      - name: Package code (exclude .env, storage, node_modules, .git)
+        run: |
+          tar czf deploy.tar.gz \
+            --exclude='.env' \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='storage/framework/cache/data/*' \
+            --exclude='storage/logs/*' \
+            --exclude='deploy.tar.gz' \
+            -C . .
+
+      - name: Upload package to server
+        run: |
+          scp -P ${{ secrets.SSH_PORT }} \
+            -i ~/.ssh/id_ed25519 \
+            -o StrictHostKeyChecking=no \
+            deploy.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/deploy.tar.gz
+
+      - name: Deploy on server
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} \
+            -i ~/.ssh/id_ed25519 \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            'cd ~/public_html && tar xzf ~/deploy.tar.gz && rm -f ~/deploy.tar.gz public/hot && chmod -R 775 storage bootstrap/cache && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && echo DEPLOY_DONE'

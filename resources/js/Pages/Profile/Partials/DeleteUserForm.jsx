@@ -1,13 +1,11 @@
-import DangerButton from '@/Components/DangerButton';
+import { Button, inputClass } from '@/Components/ui';
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
 import Modal from '@/Components/Modal';
-import SecondaryButton from '@/Components/SecondaryButton';
-import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
+import { ShieldAlert, Trash2 } from 'lucide-react';
 import { useRef, useState } from 'react';
 
-export default function DeleteUserForm({ className = '' }) {
+export default function DeleteUserForm() {
     const [confirmingUserDeletion, setConfirmingUserDeletion] = useState(false);
     const passwordInput = useRef();
 
@@ -46,45 +44,36 @@ export default function DeleteUserForm({ className = '' }) {
     };
 
     return (
-        <section className={`space-y-6 ${className}`}>
+        <section className="space-y-6">
             <header>
-                <h2 className="text-lg font-medium text-gray-900">
-                    Delete Account
-                </h2>
-
-                <p className="mt-1 text-sm text-gray-600">
-                    Once your account is deleted, all of its resources and data
-                    will be permanently deleted. Before deleting your account,
-                    please download any data or information that you wish to
-                    retain.
+                <div className="flex items-center gap-2 text-rose-600">
+                    <ShieldAlert className="h-5 w-5" />
+                    <h2 className="text-lg font-bold text-slate-800">
+                        Hapus Akun
+                    </h2>
+                </div>
+                <p className="mt-1 text-sm text-slate-500">
+                    Setelah akun dihapus, seluruh data terkait akan terhapus
+                    permanen dan tidak bisa dikembalikan.
                 </p>
             </header>
 
-            <DangerButton onClick={confirmUserDeletion}>
-                Delete Account
-            </DangerButton>
+            <Button variant="danger" onClick={confirmUserDeletion}>
+                <Trash2 className="h-4 w-4" /> Hapus Akun
+            </Button>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
-                    <h2 className="text-lg font-medium text-gray-900">
-                        Are you sure you want to delete your account?
+                    <h2 className="text-lg font-bold text-slate-800">
+                        Yakin ingin menghapus akun?
                     </h2>
-
-                    <p className="mt-1 text-sm text-gray-600">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
+                    <p className="mt-1 text-sm text-slate-500">
+                        Setelah akun dihapus, seluruh data terkait akan terhapus
+                        permanen. Masukkan password Anda untuk konfirmasi.
                     </p>
 
                     <div className="mt-6">
-                        <InputLabel
-                            htmlFor="password"
-                            value="Password"
-                            className="sr-only"
-                        />
-
-                        <TextInput
+                        <input
                             id="password"
                             type="password"
                             name="password"
@@ -93,25 +82,30 @@ export default function DeleteUserForm({ className = '' }) {
                             onChange={(e) =>
                                 setData('password', e.target.value)
                             }
-                            className="mt-1 block w-3/4"
-                            isFocused
+                            className={inputClass}
                             placeholder="Password"
                         />
-
                         <InputError
                             message={errors.password}
                             className="mt-2"
                         />
                     </div>
 
-                    <div className="mt-6 flex justify-end">
-                        <SecondaryButton onClick={closeModal}>
-                            Cancel
-                        </SecondaryButton>
-
-                        <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
-                        </DangerButton>
+                    <div className="mt-6 flex justify-end gap-3">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={closeModal}
+                        >
+                            Batal
+                        </Button>
+                        <Button
+                            type="submit"
+                            variant="danger"
+                            disabled={processing}
+                        >
+                            Hapus Akun
+                        </Button>
                     </div>
                 </form>
             </Modal>

@@ -52,7 +52,7 @@ class PresensiService
 
     /**
      * Selesaikan presensi:
-     *  - hitung durasi & fee (rate per jam, presisi menit)
+     *  - hitung durasi & fee (rate per jam berdasarkan kelas siswa, presisi menit)
      *  - kurangi sisa sesi paket (tertua yang masih >0) sebesar 1
      *  - kirim notifikasi WA jika sisa sesi <= threshold
      */
@@ -62,9 +62,9 @@ class PresensiService
             throw new \DomainException('Presensi sudah diselesaikan.');
         }
 
-        $rate = $presensi->user->rate?->nominal_per_jam;
+        $rate = $presensi->siswa->rateKelas?->nominal_per_jam;
         if ($rate === null) {
-            throw new \DomainException('Rate fee tutor belum diatur.');
+            throw new \DomainException('Rate fee untuk kelas '.($presensi->siswa->kelas ?? '-').' belum diatur.');
         }
 
         return DB::transaction(function () use ($presensi, $rate, $materi, $evaluasi) {

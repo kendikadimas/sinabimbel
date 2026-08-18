@@ -2,18 +2,24 @@ import { Badge, Button, Card, Field, inputClass, PageHeader, StatCard, Table } f
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
-import { AlertTriangle, Pencil, Plus, UserRound, Users, Wallet } from 'lucide-react';
+import { Pencil, Plus, Tags, Trash2, UserRound, Users, Wallet } from 'lucide-react';
 import { useState } from 'react';
 
-export default function TutorsIndex({ tutors, stats }) {
+export default function TutorsIndex({ tutors, stats, rateKelas }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState(null);
+    const [rateModal, setRateModal] = useState(false);
+    const [editingRate, setEditingRate] = useState(null);
 
     const form = useForm({
         name: '',
         email: '',
         password: '',
         nomor_wa: '',
+    });
+
+    const rateForm = useForm({
+        kelas: '',
         nominal_per_jam: '',
     });
 
@@ -30,7 +36,6 @@ export default function TutorsIndex({ tutors, stats }) {
             email: t.email,
             password: '',
             nomor_wa: t.nomor_wa ?? '',
-            nominal_per_jam: t.rate_per_jam ?? '',
         });
         setModalOpen(true);
     }
@@ -48,12 +53,47 @@ export default function TutorsIndex({ tutors, stats }) {
         }
     }
 
+    function openRateCreate() {
+        setEditingRate(null);
+        rateForm.reset();
+        setRateModal(true);
+    }
+
+    function openRateEdit(r) {
+        setEditingRate(r);
+        rateForm.setData({
+            kelas: r.kelas,
+            nominal_per_jam: r.nominal_per_jam,
+        });
+        setRateModal(true);
+    }
+
+    function submitRate(e) {
+        e.preventDefault();
+        if (editingRate) {
+            rateForm.patch(route('admin.rate-kelas.update', editingRate.id), {
+                onSuccess: () => setRateModal(false),
+            });
+        } else {
+            rateForm.post(route('admin.rate-kelas.store'), {
+                onSuccess: () => setRateModal(false),
+            });
+        }
+    }
+
+    function destroyRate(r) {
+        if (confirm(`Hapus rate fee untuk kelas ${r.kelas}?`)) {
+            rateForm.delete(route('admin.rate-kelas.destroy', r.id));
+        }
+    }
+
     return (
         <AppLayout>
             <PageHeader
                 icon={Users}
                 title="Kelola Tutor"
-                desc="Tambah akun, atur rate fee per jam, dan reset password."
+                desc="Tambah akun, atur password, dan reset akun tutor."
+                eyebrow="Manajemen"
                 action={
                     <Button onClick={openCreate}>
                         <Plus className="h-4 w-4" /> Tambah Tutor
@@ -61,18 +101,12 @@ export default function TutorsIndex({ tutors, stats }) {
                 }
             />
 
-            <div className="mb-6 grid grid-cols-2 gap-5 lg:grid-cols-4">
+            <div className="mb-6 grid grid-cols-2 gap-5 lg:grid-cols-3">
                 <StatCard
                     icon={Users}
                     label="Total Tutor"
                     value={stats.total}
                     tone="blue"
-                />
-                <StatCard
-                    icon={AlertTriangle}
-                    label="Tanpa Rate"
-                    value={stats.tanpa_rate}
-                    tone={stats.tanpa_rate > 0 ? 'orange' : 'green'}
                 />
                 <StatCard
                     icon={UserRound}
@@ -89,8 +123,19 @@ export default function TutorsIndex({ tutors, stats }) {
             </div>
 
             <Card padding={false}>
+                <div className="flex items-center justify-between border-b border-slate-100 px-6 py-5">
+                    <div>
+                        <h3 className="text-base font-bold text-slate-800">
+                            Daftar Tutor
+                        </h3>
+                        <p className="mt-0.5 text-sm text-slate-500">
+                            Akun login tutor
+                        </p>
+                    </div>
+                </div>
                 <Table
-                    head={['Tutor', 'Kontak', 'Rate Fee / Jam', 'Status', 'Aksi']}
+                    head={['Tutor', 'Kontak', 'Status', 'Aksi']}
+                    empty="Belum ada tutor."
                 >
                     {tutors.map((t) => (
                         <tr key={t.id} className="transition hover:bg-slate-50/70">
@@ -125,19 +170,6 @@ export default function TutorsIndex({ tutors, stats }) {
                                 )}
                             </td>
                             <td className="px-6 py-4">
-                                {t.rate_per_jam ? (
-                                    <Badge tone="blue">
-                                        Rp{' '}
-                                        {Number(t.rate_per_jam).toLocaleString(
-                                            'id-ID',
-                                        )}
-                                        /jam
-                                    </Badge>
-                                ) : (
-                                    <Badge tone="yellow">Belum diatur</Badge>
-                                )}
-                            </td>
-                            <td className="px-6 py-4">
                                 <Badge tone="green">Aktif</Badge>
                             </td>
                             <td className="px-6 py-4">
@@ -151,6 +183,70 @@ export default function TutorsIndex({ tutors, stats }) {
                         </tr>
                     ))}
                 </Table>
+            </Card>
+
+            <Card className="mt-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h3 className="text-base font-bold text-slate-800">
+                            Rate Fee per Kelas
+                        </h3>
+                        <p className="mt-0.5 text-sm text-slate-500">
+                            Fee tutor dihitung berdasarkan kelas siswa, bukan per
+                            tutor.
+                        </p>
+                    </div>
+                    <Button onClick={openRateCreate}>
+                        <Plus className="h-4 w-4" /> Tambah Rate
+                    </Button>
+                </div>
+
+                {rateKelas.length === 0 ? (
+                    <p className="mt-6 rounded-xl border-2 border-dashed border-slate-200 bg-slate-50/50 py-10 text-center text-sm text-slate-400">
+                        Belum ada rate kelas. Tambahkan untuk tiap kelas siswa.
+                    </p>
+                ) : (
+                    <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                        {rateKelas.map((r) => (
+                            <div
+                                key={r.id}
+                                className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white p-4 shadow-soft"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white">
+                                        <Tags className="h-5 w-5" />
+                                    </div>
+                                    <div>
+                                        <div className="font-bold text-slate-800">
+                                            {r.kelas}
+                                        </div>
+                                        <div className="text-sm font-semibold text-blue-700">
+                                            Rp{' '}
+                                            {Number(
+                                                r.nominal_per_jam,
+                                            ).toLocaleString('id-ID')}
+                                            /jam
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        onClick={() => openRateEdit(r)}
+                                        className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-blue-700"
+                                    >
+                                        <Pencil className="h-4 w-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => destroyRate(r)}
+                                        className="rounded-lg p-2 text-slate-500 transition hover:bg-rose-50 hover:text-rose-600"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </Card>
 
             <Modal show={modalOpen} onClose={() => setModalOpen(false)}>
@@ -201,35 +297,15 @@ export default function TutorsIndex({ tutors, stats }) {
                                 }
                             />
                         </Field>
-                        <div className="grid grid-cols-2 gap-4">
-                            <Field label="Nomor WA">
-                                <input
-                                    className={inputClass}
-                                    value={form.data.nomor_wa}
-                                    onChange={(e) =>
-                                        form.setData(
-                                            'nomor_wa',
-                                            e.target.value,
-                                        )
-                                    }
-                                />
-                            </Field>
-                            <Field label="Rate per Jam (Rp)">
-                                <input
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    className={inputClass}
-                                    value={form.data.nominal_per_jam}
-                                    onChange={(e) =>
-                                        form.setData(
-                                            'nominal_per_jam',
-                                            e.target.value,
-                                        )
-                                    }
-                                />
-                            </Field>
-                        </div>
+                        <Field label="Nomor WA">
+                            <input
+                                className={inputClass}
+                                value={form.data.nomor_wa}
+                                onChange={(e) =>
+                                    form.setData('nomor_wa', e.target.value)
+                                }
+                            />
+                        </Field>
                     </div>
 
                     <div className="mt-6 flex justify-end gap-3">
@@ -246,7 +322,56 @@ export default function TutorsIndex({ tutors, stats }) {
                     </div>
                 </form>
             </Modal>
+
+            <Modal show={rateModal} onClose={() => setRateModal(false)}>
+                <form onSubmit={submitRate} className="p-6">
+                    <h2 className="mb-1 text-xl font-bold text-slate-800">
+                        {editingRate ? 'Edit Rate Kelas' : 'Tambah Rate Kelas'}
+                    </h2>
+                    <p className="mb-6 text-sm text-slate-500">
+                        Fee per jam untuk kelas ini.
+                    </p>
+                    <div className="space-y-4">
+                        <Field label="Kelas" required>
+                            <input
+                                className={inputClass}
+                                placeholder="mis. 8 SMP / Dewasa"
+                                value={rateForm.data.kelas}
+                                onChange={(e) =>
+                                    rateForm.setData('kelas', e.target.value)
+                                }
+                            />
+                        </Field>
+                        <Field label="Rate per Jam (Rp)" required>
+                            <input
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                className={inputClass}
+                                value={rateForm.data.nominal_per_jam}
+                                onChange={(e) =>
+                                    rateForm.setData(
+                                        'nominal_per_jam',
+                                        e.target.value,
+                                    )
+                                }
+                            />
+                        </Field>
+                    </div>
+                    <div className="mt-6 flex justify-end gap-3">
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => setRateModal(false)}
+                        >
+                            Batal
+                        </Button>
+                        <Button type="submit" disabled={rateForm.processing}>
+                            {editingRate ? 'Simpan' : 'Tambah'}
+                        </Button>
+                    </div>
+                </form>
+            </Modal>
         </AppLayout>
     );
 }
-

@@ -33,7 +33,9 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Selalu arahkan ke dashboard sesuai role, jangan pakai `intended()`
+        // (yang bisa membawa tutor ke URL admin sebelumnya dan berakhir 403).
+        return redirect()->route('dashboard');
     }
 
     /**

@@ -1,39 +1,39 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Card, PageHeader } from '@/Components/ui';
+import AppLayout from '@/Layouts/AppLayout';
 import { Head } from '@inertiajs/react';
+import { UserRound } from 'lucide-react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
 
 export default function Edit({ mustVerifyEmail, status }) {
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Profile
-                </h2>
-            }
-        >
+        <AppLayout>
             <Head title="Profile" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
-                    </div>
+            <PageHeader
+                icon={UserRound}
+                title="Pengaturan Profil"
+                desc="Kelola informasi akun, password, dan keamanan."
+                eyebrow="Akun"
+            />
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
-                    </div>
+            <div className="mx-auto max-w-3xl space-y-6">
+                <Card>
+                    <UpdateProfileInformationForm
+                        mustVerifyEmail={mustVerifyEmail}
+                        status={status}
+                    />
+                </Card>
 
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <DeleteUserForm className="max-w-xl" />
-                    </div>
-                </div>
+                <Card>
+                    <UpdatePasswordForm />
+                </Card>
+
+                <Card>
+                    <DeleteUserForm />
+                </Card>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

@@ -233,7 +233,7 @@ export default function Dashboard({ stats, presensiAktif, tren }) {
                             href="admin.tutor.index"
                             icon={UserRound}
                             title="Kelola Tutor"
-                            desc="Tambah akun & atur rate fee"
+                            desc="Tambah akun & atur rate fee kelas"
                         />
                         <QuickAction
                             href="admin.siswa.index"

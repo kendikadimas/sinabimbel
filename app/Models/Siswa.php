@@ -19,6 +19,11 @@ class Siswa extends Model
         return $this->belongsTo(User::class, 'tutor_id');
     }
 
+    public function rateKelas(): BelongsTo
+    {
+        return $this->belongsTo(RateKelas::class, 'kelas', 'kelas');
+    }
+
     public function paketSesi(): HasMany
     {
         return $this->hasMany(PaketSesi::class);

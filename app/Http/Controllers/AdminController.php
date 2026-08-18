@@ -6,7 +6,7 @@ use App\Models\Fee;
 use App\Models\NotifikasiWa;
 use App\Models\PaketSesi;
 use App\Models\Presensi;
-use App\Models\RateTutor;
+use App\Models\RateKelas;
 use App\Models\Siswa;
 use App\Models\User;
 use App\Services\ExportService;
@@ -57,7 +57,6 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin/Tutors/Index', [
             'tutors' => User::where('role', 'tutor')
-                ->with('rate:id,user_id,nominal_per_jam')
                 ->orderBy('name')
                 ->get()
                 ->map(fn ($t) => [
@@ -65,15 +64,13 @@ class AdminController extends Controller
                     'name' => $t->name,
                     'email' => $t->email,
                     'nomor_wa' => $t->nomor_wa,
-                    'rate_per_jam' => $t->rate?->nominal_per_jam,
                 ]),
             'stats' => [
                 'total' => User::where('role', 'tutor')->count(),
-                'tanpa_rate' => User::where('role', 'tutor')
-                    ->whereDoesntHave('rate')->count(),
                 'total_presensi' => Presensi::whereNotNull('selesai')->count(),
                 'total_fee' => Fee::sum('jumlah'),
             ],
+            'rateKelas' => RateKelas::orderBy('kelas')->get(),
         ]);
     }
 
@@ -84,17 +81,9 @@ class AdminController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8'],
             'nomor_wa' => ['nullable', 'string', 'max:20'],
-            'nominal_per_jam' => ['nullable', 'numeric', 'min:0'],
         ]);
 
-        $tutor = User::create([
-            ...collect($data)->except('nominal_per_jam')->toArray(),
-            'role' => 'tutor',
-        ]);
-
-        if (! empty($data['nominal_per_jam'])) {
-            RateTutor::create(['user_id' => $tutor->id, 'nominal_per_jam' => $data['nominal_per_jam']]);
-        }
+        User::create([...$data, 'role' => 'tutor']);
 
         return back()->with('success', 'Tutor berhasil ditambahkan.');
     }
@@ -106,7 +95,6 @@ class AdminController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$tutor->id],
             'password' => ['nullable', 'string', 'min:8'],
             'nomor_wa' => ['nullable', 'string', 'max:20'],
-            'nominal_per_jam' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         $tutor->update([
@@ -115,13 +103,6 @@ class AdminController extends Controller
             'nomor_wa' => $data['nomor_wa'] ?? null,
             'password' => ! empty($data['password']) ? Hash::make($data['password']) : $tutor->password,
         ]);
-
-        if (isset($data['nominal_per_jam'])) {
-            RateTutor::updateOrCreate(
-                ['user_id' => $tutor->id],
-                ['nominal_per_jam' => $data['nominal_per_jam']]
-            );
-        }
 
         return back()->with('success', 'Tutor berhasil diperbarui.');
     }
@@ -135,6 +116,39 @@ class AdminController extends Controller
         $tutor->delete();
 
         return back()->with('success', 'Tutor berhasil dihapus.');
+    }
+
+    // ---- Rate fee per kelas ----
+
+    public function storeRateKelas(Request $request)
+    {
+        $data = $request->validate([
+            'kelas' => ['required', 'string', 'max:50', 'unique:rate_kelas,kelas'],
+            'nominal_per_jam' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        RateKelas::create($data);
+
+        return back()->with('success', 'Rate fee kelas ditambahkan.');
+    }
+
+    public function updateRateKelas(Request $request, RateKelas $rateKelas)
+    {
+        $data = $request->validate([
+            'kelas' => ['required', 'string', 'max:50', 'unique:rate_kelas,kelas,'.$rateKelas->id],
+            'nominal_per_jam' => ['required', 'numeric', 'min:0'],
+        ]);
+
+        $rateKelas->update($data);
+
+        return back()->with('success', 'Rate fee kelas diperbarui.');
+    }
+
+    public function destroyRateKelas(RateKelas $rateKelas)
+    {
+        $rateKelas->delete();
+
+        return back()->with('success', 'Rate fee kelas dihapus.');
     }
 
     // ---- Siswa & paket ----
@@ -387,10 +401,10 @@ class AdminController extends Controller
             'evaluasi' => $data['evaluasi'] ?? null,
         ]);
 
-        // Hitung ulang fee — pakai snapshot rate dari fee yang ada, bukan rate
-        // tutor saat ini, agar koreksi tidak mengubah nilai historis.
+        // Hitung ulang fee — pakai snapshot rate dari fee yang ada, fallback ke
+        // rate kelas siswa saat ini, agar koreksi tidak mengubah nilai historis.
         $feeRow = $presensi->fee;
-        $rate = $feeRow?->rate_per_jam ?? $presensi->user->rate?->nominal_per_jam;
+        $rate = $feeRow?->rate_per_jam ?? $presensi->siswa->rateKelas?->nominal_per_jam;
         if ($rate !== null) {
             Fee::updateOrCreate(
                 ['presensi_id' => $presensi->id],

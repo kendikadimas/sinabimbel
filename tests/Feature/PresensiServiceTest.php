@@ -4,7 +4,7 @@ namespace Tests\Feature;
 
 use App\Jobs\SendWhatsAppNotification;
 use App\Models\PaketSesi;
-use App\Models\RateTutor;
+use App\Models\RateKelas;
 use App\Models\Siswa;
 use App\Models\User;
 use App\Services\PresensiService;
@@ -18,20 +18,22 @@ class PresensiServiceTest extends TestCase
 
     private function makeTutor(): User
     {
-        $tutor = User::factory()->create();
-        RateTutor::create(['user_id' => $tutor->id, 'nominal_per_jam' => 40000]);
-
-        return $tutor;
+        return User::factory()->create();
     }
 
-    private function makeSiswaWithPaket(int $sisa = 5, ?User $tutor = null): array
+    private function makeSiswaWithPaket(int $sisa = 5, ?User $tutor = null, ?string $kelas = '8 SMP'): array
     {
         $siswa = Siswa::create([
             'nama' => 'Siswa Test',
             'mata_pelajaran' => 'Bahasa Inggris',
             'nomor_wa_orang_tua' => '62812345678',
             'tutor_id' => $tutor?->id,
+            'kelas' => $kelas,
         ]);
+        RateKelas::firstOrCreate(
+            ['kelas' => $kelas],
+            ['nominal_per_jam' => 40000],
+        );
         $paket = PaketSesi::create([
             'siswa_id' => $siswa->id,
             'jumlah_sesi' => $sisa,
@@ -101,10 +103,12 @@ class PresensiServiceTest extends TestCase
         ]);
     }
 
-    public function test_selesai_tanpa_rate_menolak(): void
+    public function test_selesai_tanpa_rate_kelas_menolak(): void
     {
         $tutor = User::factory()->create();
-        [$siswa] = $this->makeSiswaWithPaket(5, $tutor);
+        // Kelas 'Kelas Tanpa Rate' sengaja tidak dibuat di rate_kelas.
+        [$siswa] = $this->makeSiswaWithPaket(5, $tutor, 'Kelas Tanpa Rate');
+        RateKelas::where('kelas', 'Kelas Tanpa Rate')->delete();
 
         $service = app(PresensiService::class);
         $presensi = $service->mulai($tutor, $siswa->id);

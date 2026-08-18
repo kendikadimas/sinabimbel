@@ -6,7 +6,7 @@ use App\Models\Fee;
 use App\Models\NotifikasiWa;
 use App\Models\PaketSesi;
 use App\Models\Presensi;
-use App\Models\RateTutor;
+use App\Models\RateKelas;
 use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -27,10 +27,20 @@ class DatabaseSeeder extends Seeder
             ],
         );
 
+        // Rate fee per kelas (bukan per tutor).
+        $rateKelas = [
+            ['kelas' => '8 SMP', 'nominal_per_jam' => 40_000],
+            ['kelas' => '9 SMP', 'nominal_per_jam' => 45_000],
+            ['kelas' => 'Dewasa', 'nominal_per_jam' => 50_000],
+        ];
+        foreach ($rateKelas as $rk) {
+            RateKelas::firstOrCreate(['kelas' => $rk['kelas']], ['nominal_per_jam' => $rk['nominal_per_jam']]);
+        }
+
         $tutors = [
-            ['name' => 'Ms. Resti', 'email' => 'resti@sinabimbel.test', 'nomor_wa' => '62811111111', 'rate' => 40_000],
-            ['name' => 'Delana', 'email' => 'delana@sinabimbel.test', 'nomor_wa' => '62822222222', 'rate' => 35_000],
-            ['name' => 'Tutor Bahasa Inggris', 'email' => 'tutor@sinabimbel.test', 'nomor_wa' => '62833333333', 'rate' => 50_000],
+            ['name' => 'Ms. Resti', 'email' => 'resti@sinabimbel.test', 'nomor_wa' => '62811111111'],
+            ['name' => 'Delana', 'email' => 'delana@sinabimbel.test', 'nomor_wa' => '62822222222'],
+            ['name' => 'Tutor Bahasa Inggris', 'email' => 'tutor@sinabimbel.test', 'nomor_wa' => '62833333333'],
         ];
 
         $siswa = [];
@@ -45,10 +55,6 @@ class DatabaseSeeder extends Seeder
                     'nomor_wa' => $t['nomor_wa'],
                     'email_verified_at' => now(),
                 ],
-            );
-            RateTutor::firstOrCreate(
-                ['user_id' => $user->id],
-                ['nominal_per_jam' => $t['rate']],
             );
 
             foreach ([1, 2, 3] as $i) {
@@ -116,7 +122,7 @@ class DatabaseSeeder extends Seeder
             foreach ($siswa as $s) {
                 $paket = $s->paketSesi()->first();
                 $tutorId = $s->tutor_id ?? $dummyTutor->id;
-                $rate = RateTutor::where('user_id', $tutorId)->first()?->nominal_per_jam ?? 40000;
+                $rate = RateKelas::where('kelas', $s->kelas)->first()?->nominal_per_jam ?? 40000;
                 $count = 0;
 
                 for ($day = 45; $day >= 0 && $count < $perSiswa; $day--) {
