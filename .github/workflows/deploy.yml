@@ -19,12 +19,6 @@ jobs:
           extensions: mbstring, pdo_mysql, openssl, fileinfo, tokenizer, xml, ctype, json, bcmath
           coverage: none
 
-      - name: Get Composer cache
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-
       - name: Install Composer deps (no dev)
         run: composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-progress
 
@@ -51,12 +45,13 @@ jobs:
           ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
             "echo CONNECTION_OK; php -v | head -1"
 
-      - name: Package code (exclude .env, storage, node_modules, .git)
+      - name: Package code (exclude .env, storage, node_modules, vendor, .git)
         run: |
           tar czf /tmp/deploy.tar.gz \
             --exclude='.env' \
             --exclude='.git' \
             --exclude='node_modules' \
+            --exclude='vendor' \
             --exclude='storage/framework/cache/data/*' \
             --exclude='storage/logs/*' \
             -C . .
@@ -74,4 +69,4 @@ jobs:
             -i ~/.ssh/id_ed25519 \
             -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            'cd ~/public_html && tar xzf ~/deploy.tar.gz && rm -f ~/deploy.tar.gz public/hot && chmod -R 775 storage bootstrap/cache && php artisan package:discover --ansi && php artisan optimize:clear && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && echo DEPLOY_DONE'
+            'cd ~/public_html && tar xzf ~/deploy.tar.gz && rm -f ~/deploy.tar.gz public/hot && composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-progress && chmod -R 775 storage bootstrap/cache && php artisan package:discover --ansi && php artisan optimize:clear && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && echo DEPLOY_DONE'
