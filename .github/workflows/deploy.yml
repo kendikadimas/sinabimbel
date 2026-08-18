@@ -68,4 +68,4 @@ jobs:
             -i ~/.ssh/id_ed25519 \
             -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            'cd ~/public_html && rm -rf vendor && tar xzf ~/deploy.tar.gz && rm -f ~/deploy.tar.gz public/hot && chmod -R 775 storage bootstrap/cache && php artisan package:discover --ansi && php artisan optimize:clear && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && echo DEPLOY_DONE'
+            'cd ~/public_html && rm -rf vendor && tar xzf ~/deploy.tar.gz && rm -f ~/deploy.tar.gz public/hot && rm -f bootstrap/cache/*.php && chmod -R 775 storage bootstrap/cache && php artisan package:discover --ansi && php artisan optimize:clear && php artisan migrate --force && php artisan config:cache && php artisan route:cache && php artisan view:cache && echo DEPLOY_DONE'
