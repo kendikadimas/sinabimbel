@@ -53,13 +53,12 @@ jobs:
 
       - name: Package code (exclude .env, storage, node_modules, .git)
         run: |
-          tar czf deploy.tar.gz \
+          tar czf /tmp/deploy.tar.gz \
             --exclude='.env' \
             --exclude='.git' \
             --exclude='node_modules' \
             --exclude='storage/framework/cache/data/*' \
             --exclude='storage/logs/*' \
-            --exclude='deploy.tar.gz' \
             -C . .
 
       - name: Upload package to server
@@ -67,7 +66,7 @@ jobs:
           scp -P ${{ secrets.SSH_PORT }} \
             -i ~/.ssh/id_ed25519 \
             -o StrictHostKeyChecking=no \
-            deploy.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/deploy.tar.gz
+            /tmp/deploy.tar.gz ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:~/deploy.tar.gz
 
       - name: Deploy on server
         run: |
