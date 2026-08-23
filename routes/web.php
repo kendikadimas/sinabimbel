@@ -3,7 +3,6 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TutorController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -11,8 +10,6 @@ Route::get('/', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
 });
 
@@ -63,10 +60,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/penagihan/{paket}/status', [AdminController::class, 'updateStatusBayar'])->name('penagihan.status');
     });
 
-    Route::get('/tutor', [TutorController::class, 'dashboard'])->name('tutor.dashboard');
-    Route::get('/tutor/riwayat', [TutorController::class, 'riwayat'])->name('tutor.riwayat');
-    Route::post('/tutor/presensi/mulai', [TutorController::class, 'mulai'])->name('tutor.presensi.mulai');
-    Route::post('/tutor/presensi/{presensi}/selesai', [TutorController::class, 'selesai'])->name('tutor.presensi.selesai');
+    Route::prefix('tutor')->middleware('tutor')->name('tutor.')->group(function () {
+        Route::get('/', [TutorController::class, 'dashboard'])->name('dashboard');
+        Route::get('/riwayat', [TutorController::class, 'riwayat'])->name('riwayat');
+        Route::post('/presensi/mulai', [TutorController::class, 'mulai'])->name('presensi.mulai');
+        Route::post('/presensi/{presensi}/selesai', [TutorController::class, 'selesai'])->name('presensi.selesai');
+    });
 });
 
 require __DIR__.'/auth.php';
