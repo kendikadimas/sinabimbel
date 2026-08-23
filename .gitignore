@@ -17,6 +17,9 @@
 /public/build
 /public/fonts-manifest.dev.json
 /public/hot
+/public/assets/excelfee/~$*
+/public/assets/excelfee/
+/public/assets/datafee/
 /public/storage
 /storage/*.key
 /storage/pail

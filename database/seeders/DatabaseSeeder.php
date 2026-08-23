@@ -29,12 +29,16 @@ class DatabaseSeeder extends Seeder
 
         // Rate fee per kelas (bukan per tutor).
         $rateKelas = [
-            ['kelas' => '8 SMP', 'nominal_per_jam' => 40_000],
-            ['kelas' => '9 SMP', 'nominal_per_jam' => 45_000],
-            ['kelas' => 'Dewasa', 'nominal_per_jam' => 50_000],
+            ['kelas' => 'SD',               'nominal_per_sesi' => 30_000],
+            ['kelas' => 'SMP',              'nominal_per_sesi' => 30_000],
+            ['kelas' => 'SMA',              'nominal_per_sesi' => 35_000],
+            ['kelas' => 'UTBK',             'nominal_per_sesi' => 50_000],
+            ['kelas' => 'Adult (Beginner)', 'nominal_per_sesi' => 40_000],
+            ['kelas' => 'Adult (Pro)',      'nominal_per_sesi' => 60_000],
+            ['kelas' => 'Pra Sekolah',      'nominal_per_sesi' => 30_000],
         ];
         foreach ($rateKelas as $rk) {
-            RateKelas::firstOrCreate(['kelas' => $rk['kelas']], ['nominal_per_jam' => $rk['nominal_per_jam']]);
+            RateKelas::firstOrCreate(['kelas' => $rk['kelas']], ['nominal_per_sesi' => $rk['nominal_per_sesi']]);
         }
 
         $tutors = [
@@ -122,7 +126,7 @@ class DatabaseSeeder extends Seeder
             foreach ($siswa as $s) {
                 $paket = $s->paketSesi()->first();
                 $tutorId = $s->tutor_id ?? $dummyTutor->id;
-                $rate = RateKelas::where('kelas', $s->kelas)->first()?->nominal_per_jam ?? 40000;
+                $rate = RateKelas::where('kelas', $s->kelas)->first()?->nominal_per_sesi ?? 40000;
                 $count = 0;
 
                 for ($day = 45; $day >= 0 && $count < $perSiswa; $day--) {
@@ -150,8 +154,8 @@ class DatabaseSeeder extends Seeder
 
                     Fee::create([
                         'presensi_id' => $presensi->id,
-                        'jumlah' => $fee,
-                        'rate_per_jam' => $rate,
+                        'jumlah' => $rate,
+                        'rate_per_sesi' => $rate,
                     ]);
 
                     $count++;
@@ -182,8 +186,8 @@ class DatabaseSeeder extends Seeder
 
                     Fee::create([
                         'presensi_id' => $presensi->id,
-                        'jumlah' => $fee,
-                        'rate_per_jam' => $rate,
+                        'jumlah' => $rate,
+                        'rate_per_sesi' => $rate,
                     ]);
                 }
             }

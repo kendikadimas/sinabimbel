@@ -32,7 +32,7 @@ class PresensiServiceTest extends TestCase
         ]);
         RateKelas::firstOrCreate(
             ['kelas' => $kelas],
-            ['nominal_per_jam' => 40000],
+            ['nominal_per_sesi' => 40000],
         );
         $paket = PaketSesi::create([
             'siswa_id' => $siswa->id,
@@ -44,7 +44,7 @@ class PresensiServiceTest extends TestCase
         return [$siswa, $paket];
     }
 
-    public function test_fee_dihitung_dari_durasi_presisi_menit(): void
+    public function test_fee_dihitung_flat_per_sesi(): void
     {
         $tutor = $this->makeTutor();
         [$siswa] = $this->makeSiswaWithPaket(5, $tutor);
@@ -54,10 +54,9 @@ class PresensiServiceTest extends TestCase
         $presensi->update(['mulai' => now()->subMinutes(90)]);
         $selesai = $service->selesai($presensi);
 
-        $this->assertEquals(90, $selesai->durasi_menit);
-        // 40.000 / jam × 90 menit = 60.000
-        $this->assertEquals(60000.0, $selesai->fee->jumlah);
-        $this->assertEquals(40000, $selesai->fee->rate_per_jam);
+        // fee flat per sesi = 40.000, tidak peduli durasi
+        $this->assertEquals(40000.0, $selesai->fee->jumlah);
+        $this->assertEquals(40000, $selesai->fee->rate_per_sesi);
     }
 
     public function test_sisa_sesi_berkurang_satu(): void
@@ -150,8 +149,8 @@ class PresensiServiceTest extends TestCase
         $selesai = $service->selesai($presensi);
 
         $this->assertEquals(120, $selesai->durasi_menit);
-        // 40.000 × 2 jam = 80.000, bukan 240.000
-        $this->assertEquals(80000.0, $selesai->fee->jumlah);
+        // fee flat per sesi = 40.000, durasi tidak mempengaruhi
+        $this->assertEquals(40000.0, $selesai->fee->jumlah);
     }
 
     public function test_notifikasi_status_diproses_lalu_dikirim(): void

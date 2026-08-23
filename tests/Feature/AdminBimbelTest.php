@@ -92,13 +92,13 @@ class AdminBimbelTest extends TestCase
         $this->actingAs($this->admin())
             ->post(route('admin.rate-kelas.store'), [
                 'kelas' => '10 SMA',
-                'nominal_per_jam' => 60000,
+                'nominal_per_sesi' => 60000,
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('rate_kelas', [
             'kelas' => '10 SMA',
-            'nominal_per_jam' => 60000,
+            'nominal_per_sesi' => 60000,
         ]);
 
         $rk = RateKelas::where('kelas', '10 SMA')->first();
@@ -106,13 +106,13 @@ class AdminBimbelTest extends TestCase
         $this->actingAs($this->admin())
             ->patch(route('admin.rate-kelas.update', $rk->id), [
                 'kelas' => '10 SMA',
-                'nominal_per_jam' => 65000,
+                'nominal_per_sesi' => 65000,
             ])
             ->assertRedirect();
 
         $this->assertDatabaseHas('rate_kelas', [
             'kelas' => '10 SMA',
-            'nominal_per_jam' => 65000,
+            'nominal_per_sesi' => 65000,
         ]);
     }
 
@@ -215,7 +215,7 @@ class AdminBimbelTest extends TestCase
         Fee::create([
             'presensi_id' => $presensi->id,
             'jumlah' => 40000,
-            'rate_per_jam' => 40000,
+            'rate_per_sesi' => 40000,
         ]);
 
         $this->actingAs($this->admin())
@@ -229,8 +229,8 @@ class AdminBimbelTest extends TestCase
         $presensi->refresh();
         $this->assertEquals(120, $presensi->durasi_menit);
         $this->assertEquals('Diperbaiki', $presensi->materi);
-        // 40.000 × 2 jam = 80.000
-        $this->assertEquals(80000.0, $presensi->fee->jumlah);
+        // fee flat per sesi = 40.000 (tidak berubah walau durasi dikoreksi)
+        $this->assertEquals(40000.0, $presensi->fee->jumlah);
     }
 
     public function test_retry_notifikasi_hanya_untuk_gagal(): void

@@ -52,7 +52,7 @@ class PresensiService
 
     /**
      * Selesaikan presensi:
-     *  - hitung durasi & fee (rate per jam berdasarkan kelas siswa, presisi menit)
+     *  - hitung durasi & fee (rate flat per sesi berdasarkan kelas siswa)
      *  - kurangi sisa sesi paket (tertua yang masih >0) sebesar 1
      *  - kirim notifikasi WA jika sisa sesi <= threshold
      */
@@ -62,7 +62,7 @@ class PresensiService
             throw new \DomainException('Presensi sudah diselesaikan.');
         }
 
-        $rate = $presensi->siswa->rateKelas?->nominal_per_jam;
+        $rate = $presensi->siswa->rateKelas?->nominal_per_sesi;
         if ($rate === null) {
             throw new \DomainException('Rate fee untuk kelas '.($presensi->siswa->kelas ?? '-').' belum diatur.');
         }
@@ -72,7 +72,6 @@ class PresensiService
             $durasiMenit = (int) max(1, $presensi->mulai->diffInMinutes($selesai));
             $maks = (int) config('bimbel.max_durasi_menit', 480);
             $durasiMenit = min($durasiMenit, $maks);
-            $fee = round($rate * $durasiMenit / 60, 2);
 
             $presensi->update([
                 'selesai' => $selesai,
@@ -84,8 +83,8 @@ class PresensiService
 
             Fee::create([
                 'presensi_id' => $presensi->id,
-                'jumlah' => $fee,
-                'rate_per_jam' => $rate,
+                'jumlah' => $rate,
+                'rate_per_sesi' => $rate,
             ]);
 
             $this->kurangiSisaSesi($presensi->siswa);

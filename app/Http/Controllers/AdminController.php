@@ -124,7 +124,7 @@ class AdminController extends Controller
     {
         $data = $request->validate([
             'kelas' => ['required', 'string', 'max:50', 'unique:rate_kelas,kelas'],
-            'nominal_per_jam' => ['required', 'numeric', 'min:0'],
+            'nominal_per_sesi' => ['required', 'numeric', 'min:0'],
         ]);
 
         RateKelas::create($data);
@@ -136,7 +136,7 @@ class AdminController extends Controller
     {
         $data = $request->validate([
             'kelas' => ['required', 'string', 'max:50', 'unique:rate_kelas,kelas,'.$rateKelas->id],
-            'nominal_per_jam' => ['required', 'numeric', 'min:0'],
+            'nominal_per_sesi' => ['required', 'numeric', 'min:0'],
         ]);
 
         $rateKelas->update($data);
@@ -404,13 +404,13 @@ class AdminController extends Controller
         // Hitung ulang fee — pakai snapshot rate dari fee yang ada, fallback ke
         // rate kelas siswa saat ini, agar koreksi tidak mengubah nilai historis.
         $feeRow = $presensi->fee;
-        $rate = $feeRow?->rate_per_jam ?? $presensi->siswa->rateKelas?->nominal_per_jam;
+        $rate = $feeRow?->rate_per_sesi ?? $presensi->siswa->rateKelas?->nominal_per_sesi;
         if ($rate !== null) {
             Fee::updateOrCreate(
                 ['presensi_id' => $presensi->id],
                 [
-                    'jumlah' => round($rate * $durasi / 60, 2),
-                    'rate_per_jam' => $rate,
+                    'jumlah' => $rate,
+                    'rate_per_sesi' => $rate,
                 ],
             );
         }

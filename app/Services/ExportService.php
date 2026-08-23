@@ -34,8 +34,7 @@ class ExportService
 
         $row = 2;
         foreach ($presensi as $p) {
-            $jam = max(1, (int) round($p->durasi_menit / 60));
-            $sesi = $jam > 1 ? "{$jam} SESI ({$jam} Jam)" : '1 SESI (1 Jam)';
+            $sesi = '1 SESI';
             $sheet->fromArray([
                 $p->created_at?->format('n/j/Y g:i:s'),
                 $p->user->name,

@@ -20,7 +20,7 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
 
     const rateForm = useForm({
         kelas: '',
-        nominal_per_jam: '',
+        nominal_per_sesi: '',
     });
 
     function openCreate() {
@@ -63,7 +63,7 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
         setEditingRate(r);
         rateForm.setData({
             kelas: r.kelas,
-            nominal_per_jam: r.nominal_per_jam,
+            nominal_per_sesi: r.nominal_per_sesi,
         });
         setRateModal(true);
     }
