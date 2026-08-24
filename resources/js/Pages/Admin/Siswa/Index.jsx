@@ -5,7 +5,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { ChevronRight, GraduationCap, Package, Plus, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 
-export default function SiswaIndex({ siswa, tutors, stats }) {
+export default function SiswaIndex({ siswa, tutors, stats, rateKelas }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [q, setQ] = useState('');
 
@@ -228,14 +228,20 @@ export default function SiswaIndex({ siswa, tutors, stats }) {
                             />
                         </Field>
                         <Field label="Kelas">
-                            <input
+                            <select
                                 className={inputClass}
-                                placeholder="mis. 8 SMP"
                                 value={form.data.kelas}
                                 onChange={(e) =>
                                     form.setData('kelas', e.target.value)
                                 }
-                            />
+                            >
+                                <option value="">-- Pilih Kelas --</option>
+                                {rateKelas.map((r) => (
+                                    <option key={r.id} value={r.kelas}>
+                                        {r.kelas}
+                                    </option>
+                                ))}
+                            </select>
                         </Field>
                         <Field label="Mata Pelajaran" required>
                             <input

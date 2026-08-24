@@ -166,6 +166,7 @@ class AdminController extends Controller
                 ->paginate(10)
                 ->withQueryString(),
             'tutors' => User::where('role', 'tutor')->orderBy('name')->get(['id', 'name']),
+            'rateKelas' => RateKelas::orderBy('kelas')->get(['id', 'kelas']),
             'stats' => [
                 'total' => Siswa::count(),
                 'total_sisa' => PaketSesi::where('sisa_sesi', '>', 0)->sum('sisa_sesi'),
