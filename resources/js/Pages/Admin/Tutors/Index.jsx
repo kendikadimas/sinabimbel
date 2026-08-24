@@ -223,9 +223,9 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
                                         <div className="text-sm font-semibold text-blue-700">
                                             Rp{' '}
                                             {Number(
-                                                r.nominal_per_jam,
+                                                r.nominal_per_sesi,
                                             ).toLocaleString('id-ID')}
-                                            /jam
+                                            /sesi
                                         </div>
                                     </div>
                                 </div>
@@ -342,16 +342,16 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
                                 }
                             />
                         </Field>
-                        <Field label="Rate per Jam (Rp)" required>
+                        <Field label="Rate per Sesi (Rp)" required>
                             <input
                                 type="number"
                                 min="0"
                                 step="0.01"
                                 className={inputClass}
-                                value={rateForm.data.nominal_per_jam}
+                                value={rateForm.data.nominal_per_sesi}
                                 onChange={(e) =>
                                     rateForm.setData(
-                                        'nominal_per_jam',
+                                        'nominal_per_sesi',
                                         e.target.value,
                                     )
                                 }
