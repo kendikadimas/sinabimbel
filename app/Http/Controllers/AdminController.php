@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fee;
+use App\Models\Kurikulum;
+use App\Models\MataPelajaran;
 use App\Models\NotifikasiWa;
 use App\Models\PaketSesi;
 use App\Models\Presensi;
@@ -57,6 +59,7 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin/Tutors/Index', [
             'tutors' => User::where('role', 'tutor')
+                ->with('mataPelajaran:id,nama')
                 ->orderBy('name')
                 ->get()
                 ->map(fn ($t) => [
@@ -64,6 +67,7 @@ class AdminController extends Controller
                     'name' => $t->name,
                     'email' => $t->email,
                     'nomor_wa' => $t->nomor_wa,
+                    'mata_pelajaran' => $t->mataPelajaran->pluck('id'),
                 ]),
             'stats' => [
                 'total' => User::where('role', 'tutor')->count(),
@@ -71,6 +75,7 @@ class AdminController extends Controller
                 'total_fee' => Fee::sum('jumlah'),
             ],
             'rateKelas' => RateKelas::orderBy('kelas')->get(),
+            'mataPelajaran' => MataPelajaran::orderBy('nama')->get(['id', 'nama']),
         ]);
     }
 
@@ -167,6 +172,8 @@ class AdminController extends Controller
                 ->withQueryString(),
             'tutors' => User::where('role', 'tutor')->orderBy('name')->get(['id', 'name']),
             'rateKelas' => RateKelas::orderBy('kelas')->get(['id', 'kelas']),
+            'mataPelajaran' => MataPelajaran::orderBy('nama')->get(['id', 'nama']),
+            'kurikulum' => Kurikulum::orderBy('nama')->get(['id', 'nama']),
             'stats' => [
                 'total' => Siswa::count(),
                 'total_sisa' => PaketSesi::where('sisa_sesi', '>', 0)->sum('sisa_sesi'),
@@ -184,7 +191,6 @@ class AdminController extends Controller
             'nomor_grup' => ['nullable', 'string', 'max:20'],
             'kelas' => ['nullable', 'string', 'max:50'],
             'mata_pelajaran' => ['required', 'string', 'max:100'],
-            'tingkat' => ['nullable', 'string', 'max:100'],
             'nomor_wa' => ['nullable', 'string', 'max:20'],
             'nama_orang_tua' => ['nullable', 'string', 'max:255'],
             'nomor_wa_orang_tua' => ['nullable', 'string', 'max:20'],
@@ -214,7 +220,6 @@ class AdminController extends Controller
             'nomor_grup' => ['nullable', 'string', 'max:20'],
             'kelas' => ['nullable', 'string', 'max:50'],
             'mata_pelajaran' => ['required', 'string', 'max:100'],
-            'tingkat' => ['nullable', 'string', 'max:100'],
             'nomor_wa' => ['nullable', 'string', 'max:20'],
             'nama_orang_tua' => ['nullable', 'string', 'max:255'],
             'nomor_wa_orang_tua' => ['nullable', 'string', 'max:20'],
@@ -490,5 +495,71 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Status pembayaran diperbarui.');
+    }
+
+    // ---- Settings (master data) ----
+
+    public function settings(): Response
+    {
+        return Inertia::render('Admin/Settings/Index', [
+            'mataPelajaran' => MataPelajaran::orderBy('nama')->get(),
+            'kurikulum' => Kurikulum::orderBy('nama')->get(),
+        ]);
+    }
+
+    public function storeMapel(Request $request)
+    {
+        $data = $request->validate(['nama' => ['required', 'string', 'max:100', 'unique:mata_pelajaran,nama']]);
+        MataPelajaran::create($data);
+
+        return back()->with('success', 'Mata pelajaran ditambahkan.');
+    }
+
+    public function updateMapel(Request $request, MataPelajaran $mapel)
+    {
+        $data = $request->validate(['nama' => ['required', 'string', 'max:100', 'unique:mata_pelajaran,nama,'.$mapel->id]]);
+        $mapel->update($data);
+
+        return back()->with('success', 'Mata pelajaran diperbarui.');
+    }
+
+    public function destroyMapel(MataPelajaran $mapel)
+    {
+        $mapel->delete();
+
+        return back()->with('success', 'Mata pelajaran dihapus.');
+    }
+
+    public function storeKurikulum(Request $request)
+    {
+        $data = $request->validate(['nama' => ['required', 'string', 'max:100', 'unique:kurikulum,nama']]);
+        Kurikulum::create($data);
+
+        return back()->with('success', 'Kurikulum ditambahkan.');
+    }
+
+    public function updateKurikulum(Request $request, Kurikulum $kurikulum)
+    {
+        $data = $request->validate(['nama' => ['required', 'string', 'max:100', 'unique:kurikulum,nama,'.$kurikulum->id]]);
+        $kurikulum->update($data);
+
+        return back()->with('success', 'Kurikulum diperbarui.');
+    }
+
+    public function destroyKurikulum(Kurikulum $kurikulum)
+    {
+        $kurikulum->delete();
+
+        return back()->with('success', 'Kurikulum dihapus.');
+    }
+
+    // ---- Tutor assign mata pelajaran ----
+
+    public function syncTutorMapel(Request $request, User $tutor)
+    {
+        $data = $request->validate(['mata_pelajaran' => ['nullable', 'array'], 'mata_pelajaran.*' => ['exists:mata_pelajaran,id']]);
+        $tutor->mataPelajaran()->sync($data['mata_pelajaran'] ?? []);
+
+        return back()->with('success', 'Mata pelajaran tutor diperbarui.');
     }
 }

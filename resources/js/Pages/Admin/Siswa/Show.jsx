@@ -71,9 +71,6 @@ export default function SiswaShow({ siswa, tutors, paket }) {
                                 {siswa.kelas && (
                                     <Badge tone="white">{siswa.kelas}</Badge>
                                 )}
-                                {siswa.tingkat && (
-                                    <Badge tone="white">{siswa.tingkat}</Badge>
-                                )}
                             </div>
                         </div>
                     </div>

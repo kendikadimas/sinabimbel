@@ -8,6 +8,7 @@ import {
     LogOut,
     Menu,
     ReceiptText,
+    Settings,
     UserRound,
     Users,
     Wallet,
@@ -50,6 +51,12 @@ const adminNav = [
         href: 'admin.notifikasi',
         icon: Bell,
         active: 'admin.notifikasi',
+    },
+    {
+        label: 'Settings',
+        href: 'admin.settings',
+        icon: Settings,
+        active: 'admin.settings*',
     },
 ];
 

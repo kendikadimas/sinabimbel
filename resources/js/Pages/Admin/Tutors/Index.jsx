@@ -5,7 +5,7 @@ import { useForm } from '@inertiajs/react';
 import { Pencil, Plus, Tags, Trash2, UserRound, Users, Wallet } from 'lucide-react';
 import { useState } from 'react';
 
-export default function TutorsIndex({ tutors, stats, rateKelas }) {
+export default function TutorsIndex({ tutors, stats, rateKelas, mataPelajaran }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [editing, setEditing] = useState(null);
     const [rateModal, setRateModal] = useState(false);
@@ -16,12 +16,15 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
         email: '',
         password: '',
         nomor_wa: '',
+        mata_pelajaran: [],
     });
 
     const rateForm = useForm({
         kelas: '',
         nominal_per_sesi: '',
     });
+
+    const mapelForm = useForm({ mata_pelajaran: [] });
 
     function openCreate() {
         setEditing(null);
@@ -36,6 +39,7 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
             email: t.email,
             password: '',
             nomor_wa: t.nomor_wa ?? '',
+            mata_pelajaran: t.mata_pelajaran ?? [],
         });
         setModalOpen(true);
     }
@@ -44,7 +48,13 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
         e.preventDefault();
         if (editing) {
             form.patch(route('admin.tutor.update', editing.id), {
-                onSuccess: () => setModalOpen(false),
+                onSuccess: () => {
+                    // sync mapel separately
+                    mapelForm.setData('mata_pelajaran', form.data.mata_pelajaran);
+                    mapelForm.patch(route('admin.tutor.mapel.sync', editing.id), {
+                        onSuccess: () => setModalOpen(false),
+                    });
+                },
             });
         } else {
             form.post(route('admin.tutor.store'), {
@@ -134,7 +144,7 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
                     </div>
                 </div>
                 <Table
-                    head={['Tutor', 'Kontak', 'Status', 'Aksi']}
+                    head={['Tutor', 'Mapel', 'Kontak', 'Status', 'Aksi']}
                     empty="Belum ada tutor."
                 >
                     {tutors.map((t) => (
@@ -157,6 +167,16 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
                                             {t.email}
                                         </div>
                                     </div>
+                                </div>
+                            </td>
+                            <td className="px-6 py-4">
+                                <div className="flex flex-wrap gap-1">
+                                    {t.mata_pelajaran && t.mata_pelajaran.length > 0
+                                        ? mataPelajaran
+                                            .filter((m) => t.mata_pelajaran.includes(m.id))
+                                            .map((m) => <Badge key={m.id} tone="blue">{m.nama}</Badge>)
+                                        : <span className="text-slate-300 text-sm">-</span>
+                                    }
                                 </div>
                             </td>
                             <td className="px-6 py-4 text-sm text-slate-600">
@@ -306,6 +326,28 @@ export default function TutorsIndex({ tutors, stats, rateKelas }) {
                                 }
                             />
                         </Field>
+                        {editing && mataPelajaran.length > 0 && (
+                            <Field label="Mata Pelajaran Diampu">
+                                <div className="grid grid-cols-2 gap-2">
+                                    {mataPelajaran.map((m) => (
+                                        <label key={m.id} className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 hover:bg-slate-50">
+                                            <input
+                                                type="checkbox"
+                                                className="rounded"
+                                                checked={form.data.mata_pelajaran.includes(m.id)}
+                                                onChange={(e) => {
+                                                    const ids = form.data.mata_pelajaran;
+                                                    form.setData('mata_pelajaran', e.target.checked
+                                                        ? [...ids, m.id]
+                                                        : ids.filter((id) => id !== m.id));
+                                                }}
+                                            />
+                                            <span className="text-sm font-medium text-slate-700">{m.nama}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </Field>
+                        )}
                     </div>
 
                     <div className="mt-6 flex justify-end gap-3">

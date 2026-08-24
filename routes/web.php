@@ -58,6 +58,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/penagihan', [AdminController::class, 'indexPenagihan'])->name('penagihan');
         Route::get('/penagihan/export', [AdminController::class, 'exportPenagihan'])->name('penagihan.export');
         Route::patch('/penagihan/{paket}/status', [AdminController::class, 'updateStatusBayar'])->name('penagihan.status');
+
+        Route::get('/settings', [AdminController::class, 'settings'])->name('settings');
+        Route::post('/settings/mapel', [AdminController::class, 'storeMapel'])->name('mapel.store');
+        Route::patch('/settings/mapel/{mapel}', [AdminController::class, 'updateMapel'])->name('mapel.update');
+        Route::delete('/settings/mapel/{mapel}', [AdminController::class, 'destroyMapel'])->name('mapel.destroy');
+        Route::post('/settings/kurikulum', [AdminController::class, 'storeKurikulum'])->name('kurikulum.store');
+        Route::patch('/settings/kurikulum/{kurikulum}', [AdminController::class, 'updateKurikulum'])->name('kurikulum.update');
+        Route::delete('/settings/kurikulum/{kurikulum}', [AdminController::class, 'destroyKurikulum'])->name('kurikulum.destroy');
+        Route::patch('/tutor/{tutor}/mapel', [AdminController::class, 'syncTutorMapel'])->name('tutor.mapel.sync');
     });
 
     Route::prefix('tutor')->middleware('tutor')->name('tutor.')->group(function () {

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['tutor_id', 'nama', 'nomor_grup', 'kelas', 'mata_pelajaran', 'tingkat', 'nomor_wa', 'nama_orang_tua', 'nomor_wa_orang_tua', 'kurikulum'])]
+#[Fillable(['tutor_id', 'nama', 'nomor_grup', 'kelas', 'mata_pelajaran', 'nomor_wa', 'nama_orang_tua', 'nomor_wa_orang_tua', 'kurikulum'])]
 #[SoftDelete]
 class Siswa extends Model
 {

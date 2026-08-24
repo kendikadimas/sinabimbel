@@ -32,7 +32,7 @@ Sistem back-office untuk bimbel. Admin mengelola tutor, siswa, paket sesi, dan p
 - **Paket sesi**: sejumlah sesi yang dimiliki siswa (dibeli dari bimbel).
 - **Sisa sesi**: jumlah sesi tersisa pada paket siswa.
 - **Fee**: honor/komisi tutor atas aktivitas mengajar.
-- **Rate fee**: honor tutor per jam. Dihitung dari durasi presensi (mulai → selesai).
+- **Rate fee**: honor tutor flat per sesi, berdasarkan kelas siswa (bukan per tutor, bukan per jam). Semua tutor yang mengajar siswa kelas SMA mendapat fee yang sama.
 - **Periode**: rentang tanggal untuk rekap presensi/penggajian (mis. mingguan/bulanan, ditentukan admin saat lihat rekap).
 
 ## 5. Fitur Fungsional

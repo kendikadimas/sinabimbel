@@ -42,7 +42,7 @@ class ExportService
                 $p->siswa->nomor_grup,
                 $p->siswa->kelas,
                 $p->siswa->mata_pelajaran,
-                $p->siswa->tingkat,
+                $p->siswa->kelas,
                 $p->mulai->format('j F Y'),
                 $p->mulai->format('H:i'),
                 $sesi,

@@ -69,7 +69,6 @@ class DatabaseSeeder extends Seeder
                         'tutor_id' => $user->id,
                         'kelas' => ['8 SMP', '9 SMP', 'Dewasa'][$i - 1],
                         'mata_pelajaran' => 'Bahasa Inggris',
-                        'tingkat' => $i === 3 ? 'Adult Beginner' : null,
                         'nomor_wa' => "6280000000{$i}",
                         'nama_orang_tua' => "Orang Tua {$i}",
                         'nomor_wa_orang_tua' => "6289999999{$i}",

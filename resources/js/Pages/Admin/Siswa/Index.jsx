@@ -5,7 +5,7 @@ import { Link, useForm } from '@inertiajs/react';
 import { ChevronRight, GraduationCap, Package, Plus, Search, Users } from 'lucide-react';
 import { useState } from 'react';
 
-export default function SiswaIndex({ siswa, tutors, stats, rateKelas }) {
+export default function SiswaIndex({ siswa, tutors, stats, rateKelas, mataPelajaran, kurikulum }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [q, setQ] = useState('');
 
@@ -15,7 +15,6 @@ export default function SiswaIndex({ siswa, tutors, stats, rateKelas }) {
         nomor_grup: '',
         kelas: '',
         mata_pelajaran: '',
-        tingkat: '',
         nomor_wa: '',
         nama_orang_tua: '',
         nomor_wa_orang_tua: '',
@@ -244,35 +243,34 @@ export default function SiswaIndex({ siswa, tutors, stats, rateKelas }) {
                             </select>
                         </Field>
                         <Field label="Mata Pelajaran" required>
-                            <input
-                                className={inputClass}
-                                value={form.data.mata_pelajaran}
-                                onChange={(e) =>
-                                    form.setData(
-                                        'mata_pelajaran',
-                                        e.target.value,
-                                    )
-                                }
-                            />
-                        </Field>
-                        <Field label="Tingkat">
-                            <input
-                                className={inputClass}
-                                placeholder="mis. Adult Beginner"
-                                value={form.data.tingkat}
-                                onChange={(e) =>
-                                    form.setData('tingkat', e.target.value)
-                                }
-                            />
+                            {mataPelajaran.length === 0 ? (
+                                <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">
+                                    Belum ada mata pelajaran. <a href={route('admin.settings')} className="font-semibold underline">Isi di Settings dulu.</a>
+                                </div>
+                            ) : (
+                                <select
+                                    className={inputClass}
+                                    value={form.data.mata_pelajaran}
+                                    onChange={(e) => form.setData('mata_pelajaran', e.target.value)}
+                                >
+                                    <option value="">-- Pilih mata pelajaran --</option>
+                                    {mataPelajaran.map((m) => (
+                                        <option key={m.id} value={m.nama}>{m.nama}</option>
+                                    ))}
+                                </select>
+                            )}
                         </Field>
                         <Field label="Kurikulum (skip adult)">
-                            <input
+                            <select
                                 className={inputClass}
                                 value={form.data.kurikulum}
-                                onChange={(e) =>
-                                    form.setData('kurikulum', e.target.value)
-                                }
-                            />
+                                onChange={(e) => form.setData('kurikulum', e.target.value)}
+                            >
+                                <option value="">-- Pilih kurikulum --</option>
+                                {kurikulum.map((k) => (
+                                    <option key={k.id} value={k.nama}>{k.nama}</option>
+                                ))}
+                            </select>
                         </Field>
                         <Field label="Nomor WA Siswa">
                             <input
