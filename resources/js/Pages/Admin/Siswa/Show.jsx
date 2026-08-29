@@ -84,6 +84,11 @@ export default function SiswaShow({ siswa, tutors, paket }) {
                 onSubmit={assignTutor}
                 className="mb-6 flex flex-wrap items-end gap-4 rounded-2xl border border-slate-100 bg-white p-5 shadow-soft"
             >
+                {!siswa.tutor_id && (
+                    <div className="w-full rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700">
+                        Siswa belum memiliki tutor pengampu — tutor tidak bisa memulai presensi untuk siswa ini.
+                    </div>
+                )}
                 <div className="min-w-52 flex-1">
                     <label className="mb-1.5 block text-sm font-semibold text-slate-700">
                         Tutor Pengampu

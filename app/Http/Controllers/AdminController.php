@@ -198,13 +198,16 @@ class AdminController extends Controller
             'jumlah_sesi' => ['nullable', 'integer', 'min:1'],
         ]);
 
+        $jumlahSesi = $data['jumlah_sesi'] ?? null;
+        unset($data['jumlah_sesi']);
+
         $siswa = Siswa::create($data);
 
-        if (! empty($data['jumlah_sesi'])) {
+        if ($jumlahSesi) {
             PaketSesi::create([
                 'siswa_id' => $siswa->id,
-                'jumlah_sesi' => $data['jumlah_sesi'],
-                'sisa_sesi' => $data['jumlah_sesi'],
+                'jumlah_sesi' => $jumlahSesi,
+                'sisa_sesi' => $jumlahSesi,
                 'tanggal_mulai' => today(),
             ]);
         }

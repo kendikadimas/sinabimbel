@@ -49,9 +49,8 @@ export default function TutorsIndex({ tutors, stats, rateKelas, mataPelajaran })
         if (editing) {
             form.patch(route('admin.tutor.update', editing.id), {
                 onSuccess: () => {
-                    // sync mapel separately
-                    mapelForm.setData('mata_pelajaran', form.data.mata_pelajaran);
                     mapelForm.patch(route('admin.tutor.mapel.sync', editing.id), {
+                        data: { mata_pelajaran: form.data.mata_pelajaran },
                         onSuccess: () => setModalOpen(false),
                     });
                 },
