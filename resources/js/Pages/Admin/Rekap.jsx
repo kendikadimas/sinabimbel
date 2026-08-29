@@ -2,7 +2,7 @@ import { Badge, Button, Card, Field, inputClass, PageHeader, StatCard, Table } f
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
 import { Link, useForm } from '@inertiajs/react';
-import { Clock, Download, FileSpreadsheet, Pencil, Timer, Users, Wallet } from 'lucide-react';
+import { Clock, Download, FileSpreadsheet, Pencil, Users, Wallet } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Rekap({ presensi, rekapFee, dari, sampai, stats }) {

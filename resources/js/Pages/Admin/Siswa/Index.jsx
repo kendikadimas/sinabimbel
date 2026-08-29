@@ -112,7 +112,7 @@ export default function SiswaIndex({ siswa, tutors, stats, rateKelas, mataPelaja
                                             {s.nama}
                                         </div>
                                         <div className="text-xs text-slate-400">
-                                            {s.tingkat ?? s.kelas ?? '-'}
+                                            {s.kelas ?? '-'}
                                         </div>
                                     </div>
                                 </div>

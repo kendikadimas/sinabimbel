@@ -6,11 +6,6 @@ import { CheckCircle2, Download, ReceiptText, XCircle } from 'lucide-react';
 export default function Penagihan({ paket, filterStatus, stats }) {
     const filter = useForm({ status: filterStatus });
 
-    const belumBayar = paket.data.filter(
-        (p) => p.status_bayar === 'belum_bayar',
-    ).length;
-    const lunas = paket.data.filter((p) => p.status_bayar === 'lunas').length;
-
     function terapkan(e) {
         e.preventDefault();
         window.location.href = route('admin.penagihan', {

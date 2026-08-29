@@ -1,7 +1,7 @@
 import { Badge, Button, Card, Field, inputClass, PageHeader, StatCard, Table } from '@/Components/ui';
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
-import { useForm } from '@inertiajs/react';
+import { router, useForm } from '@inertiajs/react';
 import { Pencil, Plus, Tags, Trash2, UserRound, Users, Wallet } from 'lucide-react';
 import { useState } from 'react';
 
@@ -24,7 +24,6 @@ export default function TutorsIndex({ tutors, stats, rateKelas, mataPelajaran })
         nominal_per_sesi: '',
     });
 
-    const mapelForm = useForm({ mata_pelajaran: [] });
 
     function openCreate() {
         setEditing(null);
@@ -49,10 +48,11 @@ export default function TutorsIndex({ tutors, stats, rateKelas, mataPelajaran })
         if (editing) {
             form.patch(route('admin.tutor.update', editing.id), {
                 onSuccess: () => {
-                    mapelForm.patch(route('admin.tutor.mapel.sync', editing.id), {
-                        data: { mata_pelajaran: form.data.mata_pelajaran },
-                        onSuccess: () => setModalOpen(false),
-                    });
+                    router.patch(
+                        route('admin.tutor.mapel.sync', editing.id),
+                        { mata_pelajaran: form.data.mata_pelajaran },
+                        { onSuccess: () => setModalOpen(false) },
+                    );
                 },
             });
         } else {
