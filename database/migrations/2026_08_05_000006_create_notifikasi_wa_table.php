@@ -16,7 +16,7 @@ return new class extends Migration
             $table->text('isi_pesan');
             $table->enum('status', ['diproses', 'terkirim', 'gagal'])->default('diproses');
             $table->unsignedSmallInteger('sisa_sesi_saat_kirim');
-            $table->timestamp('dikirim_pada');
+            $table->timestamp('dikirim_pada')->nullable();
             $table->timestamps();
 
             $table->unique(['paket_sesi_id', 'sisa_sesi_saat_kirim']);

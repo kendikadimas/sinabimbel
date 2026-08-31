@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\NotifStatus;
 use App\Models\Fee;
 use App\Models\Kurikulum;
 use App\Models\MataPelajaran;
@@ -12,7 +13,6 @@ use App\Models\RateKelas;
 use App\Models\Siswa;
 use App\Models\User;
 use App\Services\ExportService;
-use App\Services\WhatsAppService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
@@ -376,15 +376,14 @@ class AdminController extends Controller
         ]);
     }
 
-    public function retryNotifikasi(Request $request, NotifikasiWa $notif)
+    public function markNotifikasiSent(NotifikasiWa $notif)
     {
-        if ($notif->status->value !== 'gagal') {
-            return back()->withErrors(['notif' => 'Hanya notifikasi gagal yang bisa dikirim ulang.']);
-        }
+        $notif->update([
+            'status'      => NotifStatus::Terkirim,
+            'dikirim_pada' => now(),
+        ]);
 
-        app(WhatsAppService::class)->sendNow($notif);
-
-        return back()->with('success', 'Notifikasi dikirim ulang.');
+        return back()->with('success', 'Notifikasi ditandai terkirim.');
     }
 
     // ---- Koreksi presensi ----

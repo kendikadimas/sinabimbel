@@ -20,7 +20,6 @@ return [
 
     'whatsapp' => [
         'token' => env('WA_ACCESS_TOKEN'),
-        'phone_id' => env('WA_PHONE_ID'),
     ],
 
     'resend' => [

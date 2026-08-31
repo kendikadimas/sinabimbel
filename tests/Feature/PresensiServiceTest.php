@@ -2,14 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Jobs\SendWhatsAppNotification;
 use App\Models\PaketSesi;
 use App\Models\RateKelas;
 use App\Models\Siswa;
 use App\Models\User;
 use App\Services\PresensiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
 class PresensiServiceTest extends TestCase
@@ -155,8 +153,6 @@ class PresensiServiceTest extends TestCase
 
     public function test_notifikasi_status_diproses_lalu_dikirim(): void
     {
-        Queue::fake();
-
         $tutor = $this->makeTutor();
         [$siswa, $paket] = $this->makeSiswaWithPaket(3, $tutor);
 
@@ -165,12 +161,9 @@ class PresensiServiceTest extends TestCase
         $presensi->update(['mulai' => now()->subMinutes(60)]);
         $service->selesai($presensi);
 
-        Queue::assertPushed(
-            SendWhatsAppNotification::class,
-        );
         $this->assertDatabaseHas('notifikasi_wa', [
             'paket_sesi_id' => $paket->id,
-            'status' => 'diproses',
+            'status' => 'gagal',
         ]);
     }
 

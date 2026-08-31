@@ -53,7 +53,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/rekap/{presensi}', [AdminController::class, 'updatePresensi'])->name('rekap.presensi.update');
 
         Route::get('/notifikasi', [AdminController::class, 'notifikasi'])->name('notifikasi');
-        Route::post('/notifikasi/{notif}/retry', [AdminController::class, 'retryNotifikasi'])->name('notifikasi.retry');
+        Route::post('/notifikasi/{notif}/sent', [AdminController::class, 'markNotifikasiSent'])->name('notifikasi.sent');
 
         Route::get('/penagihan', [AdminController::class, 'indexPenagihan'])->name('penagihan');
         Route::get('/penagihan/export', [AdminController::class, 'exportPenagihan'])->name('penagihan.export');

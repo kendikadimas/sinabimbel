@@ -256,7 +256,7 @@ class AdminBimbelTest extends TestCase
         ]);
 
         $this->actingAs($this->admin())
-            ->post(route('admin.notifikasi.retry', $notif->id))
+            ->post(route('admin.notifikasi.sent', $notif->id))
             ->assertRedirect();
     }
 
