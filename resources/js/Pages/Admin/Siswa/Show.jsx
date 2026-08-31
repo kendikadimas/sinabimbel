@@ -57,7 +57,7 @@ export default function SiswaShow({ siswa, tutors, paket }) {
                 <div className="relative flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-2xl font-extrabold text-white shadow-lg">
-                            {siswa.nama[0]}
+                            {siswa.nama?.[0] ?? '?'}
                         </div>
                         <div>
                             <div className="text-xs font-bold uppercase tracking-widest text-white/70">

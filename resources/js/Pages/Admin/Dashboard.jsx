@@ -195,14 +195,14 @@ export default function Dashboard({ stats, presensiAktif, tren }) {
                                 >
                                     <div className="flex items-center gap-3">
                                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-sm font-bold text-blue-700">
-                                            {p.user.name[0]}
+                                            {p.user?.name?.[0] ?? '?'}
                                         </div>
                                         <div>
                                             <div className="font-semibold text-slate-800">
-                                                {p.user.name}
+                                                {p.user?.name ?? '-'}
                                             </div>
                                             <div className="text-sm text-slate-500">
-                                                mengajar {p.siswa.nama}
+                                                mengajar {p.siswa?.nama ?? '-'}
                                             </div>
                                         </div>
                                     </div>
