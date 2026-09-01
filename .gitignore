@@ -22,6 +22,7 @@
 /public/assets/datafee/
 /public/storage
 /storage/*.key
+/storage/app/google-credentials.json
 /storage/pail
 /vendor
 _ide_helper.php
