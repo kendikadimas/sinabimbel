@@ -256,7 +256,7 @@ class AdminController extends Controller
                 'id' => $p->id,
                 'jumlah_sesi' => $p->jumlah_sesi,
                 'sisa_sesi' => $p->sisa_sesi,
-                'tanggal_mulai' => $p->tanggal_mulai->format('d M Y'),
+                'tanggal_mulai' => $p->tanggal_mulai ? \Carbon\Carbon::parse($p->tanggal_mulai)->format('d M Y') : null,
                 'deleted_at' => $p->deleted_at?->format('d M Y'),
             ]),
         ]);
