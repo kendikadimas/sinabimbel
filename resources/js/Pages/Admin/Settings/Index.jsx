@@ -2,17 +2,20 @@ import { Badge, Button, Card, Field, inputClass, PageHeader, Table } from '@/Com
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
-import { BookOpen, GraduationCap, Pencil, Plus, Settings, Trash2 } from 'lucide-react';
+import { BookOpen, DollarSign, GraduationCap, Pencil, Plus, Settings, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
-export default function SettingsIndex({ mataPelajaran, kurikulum }) {
+export default function SettingsIndex({ mataPelajaran, kurikulum, rateKelas }) {
     const [mapelModal, setMapelModal] = useState(false);
     const [editingMapel, setEditingMapel] = useState(null);
     const [kurikulumModal, setKurikulumModal] = useState(false);
     const [editingKurikulum, setEditingKurikulum] = useState(null);
+    const [rateModal, setRateModal] = useState(false);
+    const [editingRate, setEditingRate] = useState(null);
 
     const mapelForm = useForm({ nama: '' });
     const kurikulumForm = useForm({ nama: '' });
+    const rateForm = useForm({ kelas: '', nominal_per_sesi: '' });
 
     function openMapelCreate() { setEditingMapel(null); mapelForm.reset(); setMapelModal(true); }
     function openMapelEdit(m) { setEditingMapel(m); mapelForm.setData({ nama: m.nama }); setMapelModal(true); }
@@ -43,6 +46,22 @@ export default function SettingsIndex({ mataPelajaran, kurikulum }) {
     function destroyKurikulum(k) {
         if (confirm(`Hapus kurikulum "${k.nama}"?`)) {
             kurikulumForm.delete(route('admin.kurikulum.destroy', k.id));
+        }
+    }
+
+    function openRateCreate() { setEditingRate(null); rateForm.reset(); setRateModal(true); }
+    function openRateEdit(r) { setEditingRate(r); rateForm.setData({ kelas: r.kelas, nominal_per_sesi: r.nominal_per_sesi }); setRateModal(true); }
+    function submitRate(e) {
+        e.preventDefault();
+        if (editingRate) {
+            rateForm.patch(route('admin.rate-kelas.update', editingRate.id), { onSuccess: () => setRateModal(false) });
+        } else {
+            rateForm.post(route('admin.rate-kelas.store'), { onSuccess: () => setRateModal(false) });
+        }
+    }
+    function destroyRate(r) {
+        if (confirm(`Hapus rate kelas "${r.kelas}"?`)) {
+            rateForm.delete(route('admin.rate-kelas.destroy', r.id));
         }
     }
 
@@ -174,6 +193,79 @@ export default function SettingsIndex({ mataPelajaran, kurikulum }) {
                     <div className="mt-6 flex justify-end gap-3">
                         <Button type="button" variant="secondary" onClick={() => setKurikulumModal(false)}>Batal</Button>
                         <Button type="submit" disabled={kurikulumForm.processing}>{editingKurikulum ? 'Simpan' : 'Tambah'}</Button>
+                    </div>
+                </form>
+            </Modal>
+            {/* Rate Kelas */}
+            <Card className="mb-6">
+                <div className="mb-5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md">
+                            <DollarSign className="h-5 w-5" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-bold text-slate-800">Rate Kelas</h3>
+                            <p className="text-sm text-slate-500">Nominal fee per sesi berdasarkan kelas</p>
+                        </div>
+                    </div>
+                    <Button onClick={openRateCreate}>
+                        <Plus className="h-4 w-4" /> Tambah
+                    </Button>
+                </div>
+
+                {rateKelas.length === 0 ? (
+                    <div className="rounded-xl border-2 border-dashed border-amber-200 bg-amber-50 p-6 text-center">
+                        <p className="text-sm font-medium text-amber-700">Belum ada rate kelas. Tambahkan agar fee presensi bisa dihitung.</p>
+                    </div>
+                ) : (
+                    <Table head={['Kelas', 'Nominal per Sesi', 'Aksi']} empty="Belum ada data.">
+                        {rateKelas.map((r) => (
+                            <tr key={r.id} className="transition hover:bg-slate-50/70">
+                                <td className="px-6 py-4 font-medium text-slate-800">{r.kelas}</td>
+                                <td className="px-6 py-4 text-slate-600">
+                                    Rp {Number(r.nominal_per_sesi).toLocaleString('id-ID')}
+                                </td>
+                                <td className="px-6 py-4">
+                                    <div className="flex gap-2">
+                                        <Button variant="ghost" size="sm" onClick={() => openRateEdit(r)}>
+                                            <Pencil className="h-4 w-4" />
+                                        </Button>
+                                        <Button variant="ghost" size="sm" onClick={() => destroyRate(r)}>
+                                            <Trash2 className="h-4 w-4 text-rose-500" />
+                                        </Button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                    </Table>
+                )}
+            </Card>
+
+            {/* Modal Rate Kelas */}
+            <Modal show={rateModal} onClose={() => setRateModal(false)} title={editingRate ? 'Edit Rate Kelas' : 'Tambah Rate Kelas'}>
+                <form onSubmit={submitRate}>
+                    <Field label="Nama Kelas" required error={rateForm.errors.kelas}>
+                        <input
+                            className={inputClass}
+                            value={rateForm.data.kelas}
+                            onChange={(e) => rateForm.setData('kelas', e.target.value)}
+                            placeholder="mis. 8 SMP"
+                            autoFocus
+                        />
+                    </Field>
+                    <Field label="Nominal per Sesi (Rp)" required error={rateForm.errors.nominal_per_sesi}>
+                        <input
+                            type="number"
+                            className={inputClass}
+                            value={rateForm.data.nominal_per_sesi}
+                            onChange={(e) => rateForm.setData('nominal_per_sesi', e.target.value)}
+                            placeholder="mis. 35000"
+                            min="0"
+                        />
+                    </Field>
+                    <div className="mt-6 flex justify-end gap-3">
+                        <Button type="button" variant="secondary" onClick={() => setRateModal(false)}>Batal</Button>
+                        <Button type="submit" disabled={rateForm.processing}>{editingRate ? 'Simpan' : 'Tambah'}</Button>
                     </div>
                 </form>
             </Modal>

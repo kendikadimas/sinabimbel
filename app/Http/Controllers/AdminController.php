@@ -506,6 +506,7 @@ class AdminController extends Controller
         return Inertia::render('Admin/Settings/Index', [
             'mataPelajaran' => MataPelajaran::orderBy('nama')->get(),
             'kurikulum' => Kurikulum::orderBy('nama')->get(),
+            'rateKelas' => RateKelas::orderBy('kelas')->get(),
         ]);
     }
 
