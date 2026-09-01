@@ -56,6 +56,11 @@ class TutorController extends Controller
         ]);
     }
 
+    public function help(): Response
+    {
+        return Inertia::render('Tutor/Help');
+    }
+
     public function mulai(Request $request)
     {
         $data = $request->validate([

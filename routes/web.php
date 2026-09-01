@@ -67,11 +67,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/settings/kurikulum/{kurikulum}', [AdminController::class, 'updateKurikulum'])->name('kurikulum.update');
         Route::delete('/settings/kurikulum/{kurikulum}', [AdminController::class, 'destroyKurikulum'])->name('kurikulum.destroy');
         Route::patch('/tutor/{tutor}/mapel', [AdminController::class, 'syncTutorMapel'])->name('tutor.mapel.sync');
+        Route::get('/help', [AdminController::class, 'help'])->name('help');
     });
 
     Route::prefix('tutor')->middleware('tutor')->name('tutor.')->group(function () {
         Route::get('/', [TutorController::class, 'dashboard'])->name('dashboard');
         Route::get('/riwayat', [TutorController::class, 'riwayat'])->name('riwayat');
+        Route::get('/help', [TutorController::class, 'help'])->name('help');
         Route::post('/presensi/mulai', [TutorController::class, 'mulai'])->name('presensi.mulai');
         Route::post('/presensi/{presensi}/selesai', [TutorController::class, 'selesai'])->name('presensi.selesai');
     });

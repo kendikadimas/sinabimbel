@@ -4,6 +4,7 @@ import {
     Check,
     FileSpreadsheet,
     GraduationCap,
+    HelpCircle,
     LayoutDashboard,
     LogOut,
     Menu,
@@ -58,6 +59,12 @@ const adminNav = [
         icon: Settings,
         active: 'admin.settings*',
     },
+    {
+        label: 'Bantuan',
+        href: 'admin.help',
+        icon: HelpCircle,
+        active: 'admin.help',
+    },
 ];
 
 const tutorNav = [
@@ -72,6 +79,12 @@ const tutorNav = [
         href: 'tutor.riwayat',
         icon: FileSpreadsheet,
         active: 'tutor.riwayat',
+    },
+    {
+        label: 'Bantuan',
+        href: 'tutor.help',
+        icon: HelpCircle,
+        active: 'tutor.help',
     },
 ];
 

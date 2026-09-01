@@ -510,6 +510,11 @@ class AdminController extends Controller
         ]);
     }
 
+    public function help(): Response
+    {
+        return Inertia::render('Admin/Help');
+    }
+
     public function storeMapel(Request $request)
     {
         $data = $request->validate(['nama' => ['required', 'string', 'max:100', 'unique:mata_pelajaran,nama']]);
