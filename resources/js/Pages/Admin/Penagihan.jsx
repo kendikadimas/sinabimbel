@@ -75,8 +75,8 @@ export default function Penagihan({ paket, filterStatus, stats }) {
                         Daftar Paket Sesi
                     </h3>
                     <p className="mt-0.5 text-sm text-slate-500">
-                        Halaman ini menampilkan {belumBayar} belum bayar ·{' '}
-                        {lunas} lunas
+                        Halaman ini menampilkan {stats.belum_bayar} belum bayar ·{' '}
+                        {stats.lunas} lunas
                     </p>
                 </div>
                 <Table
