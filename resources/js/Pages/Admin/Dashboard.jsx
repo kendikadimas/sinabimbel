@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-export default function Dashboard({ stats, presensiAktif, tren }) {
+export default function Dashboard({ stats, presensiAktif, tren, riwayatHariIni }) {
     const [now, setNow] = useState(new Date());
     useEffect(() => {
         const t = setInterval(() => setNow(new Date()), 1000);
@@ -221,17 +221,65 @@ export default function Dashboard({ stats, presensiAktif, tren }) {
                                     <div className="text-right">
                                         <div className="flex items-center gap-1.5 text-sm font-bold text-rose-600">
                                             <span className="h-2 w-2 animate-pulse rounded-full bg-rose-500" />
-                                            Mulai{' '}
-                                            {new Date(
-                                                p.mulai,
-                                            ).toLocaleTimeString('id-ID', {
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                            })}
+                                            {(() => {
+                                                const s = Math.floor((now - new Date(p.mulai)) / 1000);
+                                                const h = String(Math.floor(s / 3600)).padStart(2, '0');
+                                                const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+                                                const sec = String(s % 60).padStart(2, '0');
+                                                return `${h}:${m}:${sec}`;
+                                            })()}
+                                        </div>
+                                        <div className="mt-1 text-xs text-slate-400">
+                                            Mulai {new Date(p.mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
                                         </div>
                                     </div>
                                 </li>
                             ))}
+                        </ul>
+                    )}
+                </Card>
+
+                {/* Riwayat Presensi Hari Ini */}
+                <Card className="mt-6 lg:col-span-2">
+                    <div className="mb-5 flex items-center justify-between">
+                        <div>
+                            <h3 className="text-base font-bold text-slate-800">Riwayat Presensi Hari Ini</h3>
+                            <p className="mt-0.5 text-sm text-slate-500">Sesi yang sudah selesai hari ini</p>
+                        </div>
+                        <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+                            {riwayatHariIni.length} sesi
+                        </span>
+                    </div>
+                    {riwayatHariIni.length === 0 ? (
+                        <p className="py-8 text-center text-sm text-slate-400">Belum ada sesi selesai hari ini.</p>
+                    ) : (
+                        <ul className="divide-y divide-slate-100">
+                            {riwayatHariIni.map((p) => {
+                                const durasi = p.durasi_menit
+                                    ? `${Math.floor(p.durasi_menit / 60)}j ${p.durasi_menit % 60}m`
+                                    : '-';
+                                return (
+                                    <li key={p.id} className="flex items-center justify-between py-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-100 text-sm font-bold text-emerald-700">
+                                                {p.user?.name?.[0] ?? '?'}
+                                            </div>
+                                            <div>
+                                                <div className="font-medium text-slate-800">{p.user?.name ?? '-'}</div>
+                                                <div className="text-xs text-slate-500">mengajar {p.siswa?.nama ?? '-'}</div>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <div className="text-sm font-bold text-emerald-600">{durasi}</div>
+                                            <div className="text-xs text-slate-400">
+                                                {new Date(p.mulai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                                {' — '}
+                                                {new Date(p.selesai).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                                            </div>
+                                        </div>
+                                    </li>
+                                );
+                            })}
                         </ul>
                     )}
                 </Card>

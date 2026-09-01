@@ -34,6 +34,9 @@ class AdminController extends Controller
             ],
             'presensiAktif' => Presensi::with(['user:id,name', 'siswa:id,nama'])
                 ->whereNull('selesai')->latest('mulai')->get(),
+            'riwayatHariIni' => Presensi::with(['user:id,name', 'siswa:id,nama'])
+                ->whereNotNull('selesai')->whereDate('mulai', today())
+                ->latest('selesai')->get(),
             'tren' => [
                 'presensi7' => collect(range(6, 0))->map(fn ($i) => [
                     'tanggal' => today()->subDays($i)->format('D'),

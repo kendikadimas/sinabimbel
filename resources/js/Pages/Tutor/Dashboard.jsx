@@ -39,6 +39,24 @@ export default function Dashboard({
         second: '2-digit',
     });
 
+    function useElapsed(startStr) {
+        const [elapsed, setElapsed] = useState('');
+        useEffect(() => {
+            if (!startStr) return;
+            const tick = () => {
+                const s = Math.floor((Date.now() - new Date(startStr)) / 1000);
+                const h = String(Math.floor(s / 3600)).padStart(2, '0');
+                const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+                const sec = String(s % 60).padStart(2, '0');
+                setElapsed(`${h}:${m}:${sec}`);
+            };
+            tick();
+            const t = setInterval(tick, 1000);
+            return () => clearInterval(t);
+        }, [startStr]);
+        return elapsed;
+    }
+
     function formatRelative(dateStr) {
         if (!dateStr) return 'Belum pernah';
         const diff = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
@@ -53,6 +71,8 @@ export default function Dashboard({
             onSuccess: () => setMulaiOpen(false),
         });
     }
+
+    const elapsed = useElapsed(presensiAktif?.mulai);
 
     function selesaikanPresensi(e) {
         e.preventDefault();
@@ -120,6 +140,10 @@ export default function Dashboard({
                                             hour: '2-digit',
                                             minute: '2-digit',
                                         })}
+                                    </div>
+                                    <div className="mt-1 flex items-center gap-1.5 text-sm font-bold text-rose-600">
+                                        <span className="h-2 w-2 animate-pulse rounded-full bg-rose-500" />
+                                        {elapsed}
                                     </div>
                                 </div>
                             </div>
