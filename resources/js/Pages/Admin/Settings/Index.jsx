@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Field, inputClass, PageHeader, Table } from '@/Components/ui';
+import { Badge, Button, Card, Field, inputClass, PageHeader, PageTip, Table } from '@/Components/ui';
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
@@ -269,6 +269,13 @@ export default function SettingsIndex({ mataPelajaran, kurikulum, rateKelas }) {
                     </div>
                 </form>
             </Modal>
+
+            <PageTip title="Tips Settings" tips={[
+                'Isi dulu Mata Pelajaran dan Kurikulum sebelum daftarkan siswa — keduanya dipakai di dropdown form siswa.',
+                'Rate Kelas menjadi nilai default saat buat paket sesi baru — set sebelum mulai operasional.',
+                'Perubahan rate kelas tidak mempengaruhi paket sesi yang sudah ada.',
+                'Hapus mata pelajaran/kurikulum hanya jika belum dipakai di data siswa manapun.',
+            ]} />
         </AppLayout>
     );
 }

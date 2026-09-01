@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Field, inputClass, PageHeader, StatCard, Table } from '@/Components/ui';
+import { Badge, Button, Card, Field, inputClass, PageHeader, PageTip, StatCard, Table } from '@/Components/ui';
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
 import { Link, useForm } from '@inertiajs/react';
@@ -337,6 +337,14 @@ export default function Rekap({ presensi, rekapFee, dari, sampai, stats }) {
                     </div>
                 </form>
             </Modal>
+
+            <PageTip title="Tips Rekap & Penggajian" tips={[
+                'Filter dulu berdasarkan tutor dan rentang tanggal, baru klik "Terapkan".',
+                'Fee dihitung otomatis saat presensi selesai — sesuai rate kelas saat itu.',
+                'Koreksi presensi: klik ikon pensil → ubah waktu mulai/selesai, materi, evaluasi.',
+                'Export CSV mengunduh data sesuai filter aktif — set filter dulu sebelum export.',
+                'Durasi max per sesi 8 jam — presensi lebih dari itu akan dipotong otomatis.',
+            ]} />
         </AppLayout>
     );
 }

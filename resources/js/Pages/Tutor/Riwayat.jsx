@@ -1,4 +1,4 @@
-import { Badge, Card, PageHeader, StatCard, Table } from '@/Components/ui';
+import { Badge, Card, PageHeader, PageTip, StatCard, Table } from '@/Components/ui';
 import AppLayout from '@/Layouts/AppLayout';
 import { Link } from '@inertiajs/react';
 import { BookOpen, Clock, GraduationCap, History, Wallet } from 'lucide-react';
@@ -152,6 +152,11 @@ export default function Riwayat({ presensi, stats }) {
                     ))}
                 </div>
             )}
+            <PageTip title="Tips Riwayat Mengajar" tips={[
+                'Fee per sesi dihitung otomatis saat presensi selesai.',
+                'Durasi dihitung dari waktu mulai hingga selesai — pastikan selesaikan presensi setelah mengajar.',
+                'Data riwayat tidak bisa diedit sendiri — hubungi admin untuk koreksi.',
+            ]} />
         </AppLayout>
     );
 }

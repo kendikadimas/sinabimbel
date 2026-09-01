@@ -219,3 +219,25 @@ export function Field({ label, children, required }) {
 
 export const inputClass =
     'w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20';
+
+export function PageTip({ title = 'Tips', tips = [] }) {
+    if (!tips.length) return null;
+    return (
+        <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-5">
+            <div className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-blue-600">
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20A10 10 0 0012 2z" />
+                </svg>
+                {title}
+            </div>
+            <ul className="space-y-2">
+                {tips.map((t, i) => (
+                    <li key={i} className="flex gap-2 text-sm text-slate-600">
+                        <span className="mt-0.5 shrink-0 text-blue-400">›</span>
+                        {t}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+}

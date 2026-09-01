@@ -1,4 +1,4 @@
-import { Card, PageHeader, StatCard } from '@/Components/ui';
+import { Card, PageHeader, PageTip, StatCard } from '@/Components/ui';
 import AppLayout from '@/Layouts/AppLayout';
 import { Link } from '@inertiajs/react';
 import {
@@ -322,6 +322,13 @@ export default function Dashboard({ stats, presensiAktif, tren, riwayatHariIni }
                     </div>
                 </Card>
             </div>
+
+            <PageTip title="Tips Dashboard Admin" tips={[
+                'Elapsed timer (hh:mm:ss) di kartu sesi aktif update tiap detik — monitor durasi mengajar secara real-time.',
+                'Riwayat hari ini tampil otomatis di bawah sesi aktif setelah presensi selesai.',
+                'Notifikasi merah di stat card = ada WA yang belum dikirim — segera kirim ke orang tua.',
+                'Aksi Cepat di sidebar kanan adalah shortcut ke menu-menu yang sering dipakai.',
+            ]} />
         </AppLayout>
     );
 }

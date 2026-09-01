@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Field, inputClass, PageHeader, StatCard, Table } from '@/Components/ui';
+import { Badge, Button, Card, Field, inputClass, PageHeader, PageTip, StatCard, Table } from '@/Components/ui';
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
@@ -291,6 +291,12 @@ export default function Dashboard({
                     </div>
                 </form>
             </Modal>
+
+            <PageTip title="Tips Dashboard Tutor" tips={[
+                'Timer hh:mm:ss di kartu sesi aktif berjalan real-time — pastikan selesaikan sesi setelah mengajar.',
+                'Sisa sesi merah (≤3) artinya paket hampir habis — infokan admin untuk topup.',
+                'Hanya bisa ada satu presensi aktif — selesaikan dulu sebelum mulai sesi baru.',
+            ]} />
         </AppLayout>
     );
 }

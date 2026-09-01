@@ -1,4 +1,4 @@
-import { Badge, Card, PageHeader, Table } from '@/Components/ui';
+import { Badge, Card, PageHeader, PageTip, Table } from '@/Components/ui';
 import AppLayout from '@/Layouts/AppLayout';
 import { Link, router, useForm } from '@inertiajs/react';
 import { Bell, CircleCheck, Clock, MessageCircle, Phone } from 'lucide-react';
@@ -89,6 +89,13 @@ export default function Notifikasi({ notifikasi }) {
                     ))}
                 </div>
             )}
+
+            <PageTip title="Tips Notifikasi WA" tips={[
+                'Notifikasi muncul otomatis saat sisa sesi siswa ≤ 3 setelah presensi selesai.',
+                'Klik "Hubungi WA" — browser buka wa.me, ketik pesan, kirim secara manual.',
+                'Setelah kirim, kembali ke halaman ini dan klik "Tandai Terkirim".',
+                'Notifikasi tidak dibuat saat buat paket baru atau topup — hanya saat presensi selesai.',
+            ]} />
         </AppLayout>
     );
 }

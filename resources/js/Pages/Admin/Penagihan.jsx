@@ -1,4 +1,4 @@
-import { Badge, Button, Card, inputClass, PageHeader, Table } from '@/Components/ui';
+import { Badge, Button, Card, inputClass, PageHeader, PageTip, Table } from '@/Components/ui';
 import AppLayout from '@/Layouts/AppLayout';
 import { Link, useForm } from '@inertiajs/react';
 import { CheckCircle2, Download, ReceiptText, XCircle } from 'lucide-react';
@@ -166,6 +166,13 @@ export default function Penagihan({ paket, filterStatus, stats }) {
                     ))}
                 </div>
             )}
+
+            <PageTip title="Tips Penagihan" tips={[
+                'Tagihan terbuat otomatis saat presensi selesai — tidak perlu input manual.',
+                'Klik "Tandai Lunas" untuk mengubah status bayar per paket sesi.',
+                'Filter by status untuk fokus ke tagihan yang belum dibayar.',
+                'Export CSV untuk kirim laporan ke orang tua atau arsip keuangan.',
+            ]} />
         </AppLayout>
     );
 }
