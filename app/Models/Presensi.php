@@ -14,6 +14,11 @@ class Presensi extends Model
 {
     protected $table = 'presensi';
 
+    protected $casts = [
+        'mulai'   => 'datetime',
+        'selesai' => 'datetime',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
