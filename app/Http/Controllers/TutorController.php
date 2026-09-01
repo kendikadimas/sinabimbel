@@ -21,7 +21,9 @@ class TutorController extends Controller
         return Inertia::render('Tutor/Dashboard', [
             'presensiAktif' => $aktif?->load('siswa:id,nama,mata_pelajaran,kelas'),
             'siswaDiampu' => Siswa::where('tutor_id', $tutor->id)
-                ->orderBy('nama')->get(['id', 'nama', 'mata_pelajaran']),
+                ->withSum('paketSesi as sisa_sesi', 'sisa_sesi')
+                ->withMax('presensi as last_presensi', 'mulai')
+                ->orderBy('nama')->get(['id', 'nama', 'mata_pelajaran', 'kelas']),
             'feeTotal' => $tutor->presensi()
                 ->whereNotNull('selesai')
                 ->with('fee')

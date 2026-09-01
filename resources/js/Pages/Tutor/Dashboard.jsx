@@ -1,9 +1,8 @@
-import { Badge, Button, Card, Field, inputClass, PageHeader, StatCard } from '@/Components/ui';
+import { Badge, Button, Card, Field, inputClass, PageHeader, StatCard, Table } from '@/Components/ui';
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
 import { useForm } from '@inertiajs/react';
 import {
-    CalendarDays,
     Clock,
     GraduationCap,
     Play,
@@ -29,6 +28,14 @@ export default function Dashboard({
         month: 'long',
         year: 'numeric',
     });
+
+    function formatRelative(dateStr) {
+        if (!dateStr) return 'Belum pernah';
+        const diff = Math.floor((Date.now() - new Date(dateStr)) / 86400000);
+        if (diff === 0) return 'Hari ini';
+        if (diff === 1) return 'Kemarin';
+        return `${diff} hari lalu`;
+    }
 
     function mulaiPresensi(e) {
         e.preventDefault();
@@ -187,17 +194,42 @@ export default function Dashboard({
                 )}
             </div>
 
-            <Modal show={mulaiOpen} onClose={() => setMulaiOpen(false)}>
-                <form onSubmit={mulaiPresensi} className="p-6">
-                    <div className="mb-1 flex items-center gap-2">
-                        <CalendarDays className="h-5 w-5 text-blue-700" />
-                        <h2 className="text-xl font-bold text-slate-800">
-                            Mulai Presensi
-                        </h2>
+            {/* Daftar Siswa Diampu */}
+            <Card className="mt-8">
+                <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white">
+                            <GraduationCap className="h-4 w-4" />
+                        </div>
+                        <h3 className="font-bold text-slate-800">Siswa Diampu</h3>
                     </div>
-                    <p className="mb-6 text-sm text-slate-500">
-                        Pilih siswa yang akan diajar.
-                    </p>
+                </div>
+                {siswaDiampu.length === 0 ? (
+                    <p className="text-sm text-slate-400">Belum ada siswa yang diampu.</p>
+                ) : (
+                    <Table head={['Nama', 'Kelas', 'Mata Pelajaran', 'Sisa Sesi', 'Terakhir Diajar']}>
+                        {siswaDiampu.map((s) => (
+                            <tr key={s.id} className="transition hover:bg-slate-50/70">
+                                <td className="px-6 py-3 font-medium text-slate-800">{s.nama}</td>
+                                <td className="px-6 py-3 text-slate-500">{s.kelas ?? '-'}</td>
+                                <td className="px-6 py-3 text-slate-500">{s.mata_pelajaran}</td>
+                                <td className="px-6 py-3">
+                                    <Badge tone={s.sisa_sesi <= 3 ? 'red' : 'green'}>
+                                        {s.sisa_sesi ?? 0} sesi
+                                    </Badge>
+                                </td>
+                                <td className="px-6 py-3 text-sm text-slate-400">
+                                    {s.last_presensi ? formatRelative(s.last_presensi) : 'Belum pernah'}
+                                </td>
+                            </tr>
+                        ))}
+                    </Table>
+                )}
+            </Card>
+
+            <Modal show={mulaiOpen} onClose={() => setMulaiOpen(false)} title="Mulai Presensi">
+                <form onSubmit={mulaiPresensi}>
+                    <p className="mb-4 text-sm text-slate-500">Pilih siswa yang akan diajar.</p>
                     <Field label="Pilih Siswa" required>
                         <select
                             required
@@ -216,11 +248,7 @@ export default function Dashboard({
                         </select>
                     </Field>
                     <div className="mt-6 flex justify-end gap-3">
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            onClick={() => setMulaiOpen(false)}
-                        >
+                        <Button type="button" variant="secondary" onClick={() => setMulaiOpen(false)}>
                             Batal
                         </Button>
                         <Button type="submit" disabled={mulaiForm.processing}>
