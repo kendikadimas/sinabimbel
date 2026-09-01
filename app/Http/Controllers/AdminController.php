@@ -247,7 +247,7 @@ class AdminController extends Controller
 
     public function showSiswa(Siswa $siswa): Response
     {
-        $siswa->load(['paketSesi' => fn ($q) => $q->withTrashed()->with('notifikasi'), 'tutor']);
+        $siswa->load(['paketSesi' => fn ($q) => $q->withoutGlobalScopes()->with('notifikasi'), 'tutor']);
 
         return Inertia::render('Admin/Siswa/Show', [
             'siswa' => $siswa,
