@@ -233,7 +233,7 @@ class AdminBimbelTest extends TestCase
         $this->assertEquals(40000.0, $presensi->fee->jumlah);
     }
 
-    public function test_retry_notifikasi_hanya_untuk_gagal(): void
+    public function test_mark_notifikasi_sent(): void
     {
         $siswa = Siswa::create([
             'nama' => 'Siswa Retry',

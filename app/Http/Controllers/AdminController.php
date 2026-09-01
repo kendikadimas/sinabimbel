@@ -371,7 +371,7 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin/Notifikasi', [
             'notifikasi' => NotifikasiWa::with(['siswa:id,nama', 'paketSesi:id,jumlah_sesi'])
-                ->latest('dikirim_pada')
+                ->latest()
                 ->paginate(15),
         ]);
     }
