@@ -10,7 +10,7 @@ import {
     Timer,
     Wallet,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function Dashboard({
     presensiAktif,
@@ -22,11 +22,21 @@ export default function Dashboard({
     const mulaiForm = useForm({ siswa_id: '' });
     const selesaiForm = useForm({ materi: '', evaluasi: '' });
 
-    const today = new Date().toLocaleDateString('id-ID', {
+    const [now, setNow] = useState(new Date());
+    useEffect(() => {
+        const t = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(t);
+    }, []);
+
+    const today = now.toLocaleDateString('id-ID', {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric',
+    }) + ', ' + now.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
     });
 
     function formatRelative(dateStr) {

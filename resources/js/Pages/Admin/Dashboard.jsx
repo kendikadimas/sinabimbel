@@ -13,14 +13,26 @@ import {
     Users,
     Wallet,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export default function Dashboard({ stats, presensiAktif, tren }) {
+    const [now, setNow] = useState(new Date());
+    useEffect(() => {
+        const t = setInterval(() => setNow(new Date()), 1000);
+        return () => clearInterval(t);
+    }, []);
+
+    const waktu = now.toLocaleDateString('id-ID', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+    }) + ', ' + now.toLocaleTimeString('id-ID', {
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+    });
     return (
         <AppLayout>
             <PageHeader
                 icon={Sparkles}
                 title="Selamat datang kembali"
-                eyebrow="Admin Overview"
+                eyebrow={waktu}
                 action={
                     <span className="flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-sm font-bold backdrop-blur">
                         <span className="h-2 w-2 animate-pulse rounded-full bg-amber-300" />
