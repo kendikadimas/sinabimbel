@@ -11,6 +11,7 @@ export default function Modal({
     maxWidth = '2xl',
     closeable = true,
     onClose = () => {},
+    title,
 }) {
     const close = () => {
         if (closeable) {
@@ -56,7 +57,14 @@ export default function Modal({
                     <DialogPanel
                         className={`mb-6 transform overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl transition-all sm:mx-auto sm:w-full ${maxWidthClass}`}
                     >
-                        {children}
+                        {title && (
+                            <div className="border-b border-slate-100 px-6 py-4">
+                                <h2 className="text-base font-bold text-slate-800">{title}</h2>
+                            </div>
+                        )}
+                        <div className="p-6">
+                            {children}
+                        </div>
                     </DialogPanel>
                 </TransitionChild>
             </Dialog>
