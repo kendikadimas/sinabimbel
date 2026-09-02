@@ -1,7 +1,7 @@
 import { Badge, Card, PageHeader, PageTip, Table } from '@/Components/ui';
 import AppLayout from '@/Layouts/AppLayout';
 import { Link, router, useForm } from '@inertiajs/react';
-import { Bell, CircleCheck, Clock, MessageCircle, Phone } from 'lucide-react';
+import { Bell, CircleCheck, Clock, MessageCircle, Phone, Trash2 } from 'lucide-react';
 
 export default function Notifikasi({ notifikasi }) {
     const terkirim = notifikasi.data.filter((n) => n.status === 'terkirim').length;
@@ -113,6 +113,12 @@ function ActionButtons({ notif }) {
         form.post(route('admin.notifikasi.sent', notif.id));
     }
 
+    function hapus() {
+        if (confirm('Hapus notifikasi ini?')) {
+            router.delete(route('admin.notifikasi.destroy', notif.id));
+        }
+    }
+
     return (
         <div className="flex items-center gap-2">
             <a
@@ -131,6 +137,14 @@ function ActionButtons({ notif }) {
             >
                 <CircleCheck className="h-3.5 w-3.5" />
                 Tandai Terkirim
+            </button>
+            <button
+                onClick={hapus}
+                disabled={form.processing}
+                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50 disabled:opacity-50"
+            >
+                <Trash2 className="h-3.5 w-3.5" />
+                Hapus
             </button>
         </div>
     );

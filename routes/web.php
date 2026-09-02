@@ -54,6 +54,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/notifikasi', [AdminController::class, 'notifikasi'])->name('notifikasi');
         Route::post('/notifikasi/{notif}/sent', [AdminController::class, 'markNotifikasiSent'])->name('notifikasi.sent');
+        Route::delete('/notifikasi/{notif}', [AdminController::class, 'destroyNotifikasi'])->name('notifikasi.destroy');
 
         Route::get('/penagihan', [AdminController::class, 'indexPenagihan'])->name('penagihan');
         Route::get('/penagihan/export', [AdminController::class, 'exportPenagihan'])->name('penagihan.export');
@@ -67,6 +68,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/settings/kurikulum/{kurikulum}', [AdminController::class, 'updateKurikulum'])->name('kurikulum.update');
         Route::delete('/settings/kurikulum/{kurikulum}', [AdminController::class, 'destroyKurikulum'])->name('kurikulum.destroy');
         Route::patch('/tutor/{tutor}/mapel', [AdminController::class, 'syncTutorMapel'])->name('tutor.mapel.sync');
+        Route::get('/log', [AdminController::class, 'activityLog'])->name('log');
         Route::get('/help', [AdminController::class, 'help'])->name('help');
     });
 

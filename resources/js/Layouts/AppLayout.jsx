@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     Bell,
     Check,
+    ClipboardList,
     FileSpreadsheet,
     GraduationCap,
     HelpCircle,
@@ -58,6 +59,12 @@ const adminNav = [
         href: 'admin.settings',
         icon: Settings,
         active: 'admin.settings*',
+    },
+    {
+        label: 'Log Aktivitas',
+        href: 'admin.log',
+        icon: ClipboardList,
+        active: 'admin.log',
     },
     {
         label: 'Bantuan',

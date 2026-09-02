@@ -1,12 +1,13 @@
 import { Badge, Button, Card, Field, inputClass, Table } from '@/Components/ui';
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import {
     ArrowLeft,
     GraduationCap,
     Phone,
     Plus,
+    Trash2,
     UserRound,
     Wallet,
 } from 'lucide-react';
@@ -173,16 +174,28 @@ export default function SiswaShow({ siswa, tutors, paket }) {
                             </td>
                             <td className="px-6 py-4">
                                 {!p.deleted_at && (
-                                    <Button
-                                        variant="secondary"
-                                        className="px-3 py-1.5 text-xs"
-                                        onClick={() => {
-                                            topUpForm.reset();
-                                            setTopUpOpen(p.id);
-                                        }}
-                                    >
-                                        Top-up
-                                    </Button>
+                                    <div className="flex items-center gap-2">
+                                        <Button
+                                            variant="secondary"
+                                            className="px-3 py-1.5 text-xs"
+                                            onClick={() => {
+                                                topUpForm.reset();
+                                                setTopUpOpen(p.id);
+                                            }}
+                                        >
+                                            Top-up
+                                        </Button>
+                                        <button
+                                            onClick={() => {
+                                                if (confirm('Hapus paket sesi ini?')) {
+                                                    router.delete(route('admin.paket.destroy', p.id));
+                                                }
+                                            }}
+                                            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-50"
+                                        >
+                                            <Trash2 className="h-3.5 w-3.5" /> Hapus
+                                        </button>
+                                    </div>
                                 )}
                             </td>
                         </tr>

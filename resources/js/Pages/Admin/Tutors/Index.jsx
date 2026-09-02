@@ -192,12 +192,24 @@ export default function TutorsIndex({ tutors, stats, rateKelas, mataPelajaran })
                                 <Badge tone="green">Aktif</Badge>
                             </td>
                             <td className="px-6 py-4">
-                                <button
-                                    onClick={() => openEdit(t)}
-                                    className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
-                                >
-                                    <Pencil className="h-4 w-4" /> Edit
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => openEdit(t)}
+                                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+                                    >
+                                        <Pencil className="h-4 w-4" /> Edit
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            if (confirm(`Hapus tutor ${t.name}? Tutor yang memiliki data presensi tidak dapat dihapus.`)) {
+                                                router.delete(route('admin.tutor.destroy', t.id));
+                                            }
+                                        }}
+                                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                                    >
+                                        <Trash2 className="h-4 w-4" /> Hapus
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}

@@ -1,0 +1,29 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class ActivityLog extends Model
+{
+    protected $fillable = ['user_id', 'action', 'subject_type', 'subject_id', 'description', 'meta'];
+
+    protected $casts = ['meta' => 'array'];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class)->withTrashed();
+    }
+
+    public static function record(string $action, string $description, ?string $subjectType = null, ?int $subjectId = null, array $meta = []): void
+    {
+        static::create([
+            'user_id'      => auth()->id(),
+            'action'       => $action,
+            'subject_type' => $subjectType,
+            'subject_id'   => $subjectId,
+            'description'  => $description,
+            'meta'         => empty($meta) ? null : $meta,
+        ]);
+    }
+}

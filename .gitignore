@@ -8,6 +8,7 @@
 /.codex
 /.cursor/
 /.idea
+public/assets/sinabimbel-*.json
 /.nova
 /.phpunit.cache
 /.vscode

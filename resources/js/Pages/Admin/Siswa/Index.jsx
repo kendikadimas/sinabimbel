@@ -1,8 +1,8 @@
 import { Badge, Button, Card, Field, inputClass, PageHeader, StatCard, Table } from '@/Components/ui';
 import Modal from '@/Components/Modal';
 import AppLayout from '@/Layouts/AppLayout';
-import { Link, useForm } from '@inertiajs/react';
-import { ChevronRight, GraduationCap, Package, Plus, Search, Users } from 'lucide-react';
+import { Link, router, useForm } from '@inertiajs/react';
+import { ChevronRight, GraduationCap, Package, Plus, Search, Trash2, Users } from 'lucide-react';
 import { useState } from 'react';
 
 export default function SiswaIndex({ siswa, tutors, stats, rateKelas, mataPelajaran, kurikulum }) {
@@ -145,13 +145,25 @@ export default function SiswaIndex({ siswa, tutors, stats, rateKelas, mataPelaja
                                 )}
                             </td>
                             <td className="px-6 py-4 text-right">
-                                <Link
-                                    href={route('admin.siswa.show', s.id)}
-                                    className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
-                                >
-                                    Detail
-                                    <ChevronRight className="h-4 w-4" />
-                                </Link>
+                                <div className="inline-flex items-center gap-1">
+                                    <Link
+                                        href={route('admin.siswa.show', s.id)}
+                                        className="inline-flex items-center gap-1 rounded-lg px-3 py-1.5 text-sm font-semibold text-blue-700 transition hover:bg-blue-100"
+                                    >
+                                        Detail
+                                        <ChevronRight className="h-4 w-4" />
+                                    </Link>
+                                    <button
+                                        onClick={() => {
+                                            if (confirm(`Hapus siswa ${s.nama}? Semua data terkait juga akan dihapus.`)) {
+                                                router.delete(route('admin.siswa.destroy', s.id));
+                                            }
+                                        }}
+                                        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                                    >
+                                        <Trash2 className="h-4 w-4" />
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     ))}

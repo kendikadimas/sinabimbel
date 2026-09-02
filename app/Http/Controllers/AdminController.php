@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\NotifStatus;
+use App\Models\ActivityLog;
 use App\Models\Fee;
 use App\Models\Kurikulum;
 use App\Models\MataPelajaran;
@@ -93,6 +94,8 @@ class AdminController extends Controller
 
         User::create([...$data, 'role' => 'tutor']);
 
+        ActivityLog::record('create', "Tambah tutor: {$data['name']}", 'Tutor');
+
         return back()->with('success', 'Tutor berhasil ditambahkan.');
     }
 
@@ -112,6 +115,8 @@ class AdminController extends Controller
             'password' => ! empty($data['password']) ? Hash::make($data['password']) : $tutor->password,
         ]);
 
+        ActivityLog::record('update', "Update tutor: {$tutor->name}", 'Tutor', $tutor->id);
+
         return back()->with('success', 'Tutor berhasil diperbarui.');
     }
 
@@ -122,6 +127,8 @@ class AdminController extends Controller
         }
 
         $tutor->delete();
+
+        ActivityLog::record('delete', "Hapus tutor: {$tutor->name}", 'Tutor', $tutor->id);
 
         return back()->with('success', 'Tutor berhasil dihapus.');
     }
@@ -206,6 +213,8 @@ class AdminController extends Controller
 
         $siswa = Siswa::create($data);
 
+        ActivityLog::record('create', "Tambah siswa: {$siswa->nama}", 'Siswa', $siswa->id);
+
         if ($jumlahSesi) {
             PaketSesi::create([
                 'siswa_id' => $siswa->id,
@@ -233,6 +242,8 @@ class AdminController extends Controller
         ]);
 
         $siswa->update($data);
+
+        ActivityLog::record('update', "Update siswa: {$siswa->nama}", 'Siswa', $siswa->id);
 
         return back()->with('success', 'Siswa berhasil diperbarui.');
     }
@@ -268,6 +279,8 @@ class AdminController extends Controller
     public function destroySiswa(Siswa $siswa)
     {
         $siswa->delete();
+
+        ActivityLog::record('delete', "Hapus siswa: {$siswa->nama}", 'Siswa', $siswa->id);
 
         return back()->with('success', 'Siswa berhasil dihapus.');
     }
@@ -307,6 +320,8 @@ class AdminController extends Controller
     {
         $paket->delete();
 
+        ActivityLog::record('delete', "Hapus paket sesi ID {$paket->id} (siswa ID {$paket->siswa_id})", 'PaketSesi', $paket->id);
+
         return back()->with('success', 'Paket dihapus.');
     }
 
@@ -319,7 +334,7 @@ class AdminController extends Controller
 
         $presensi = Presensi::query()
             ->whereNotNull('selesai')
-            ->with(['user:id,name', 'siswa:id,nama,kelas,mata_pelajaran,tingkat,nomor_grup', 'fee'])
+            ->with(['user:id,name', 'siswa:id,nama,kelas,mata_pelajaran,nomor_grup', 'fee'])
             ->whereBetween('mulai', [$dari->startOfDay(), $sampai->endOfDay()])
             ->orderBy('mulai')
             ->paginate(15)
@@ -360,7 +375,7 @@ class AdminController extends Controller
 
         $presensi = Presensi::query()
             ->whereNotNull('selesai')
-            ->with(['user:id,name', 'siswa:id,nama,kelas,mata_pelajaran,tingkat,nomor_grup,nomor_wa,nama_orang_tua,nomor_wa_orang_tua,kurikulum', 'fee'])
+            ->with(['user:id,name', 'siswa:id,nama,kelas,mata_pelajaran,nomor_grup,nomor_wa,nama_orang_tua,nomor_wa_orang_tua,kurikulum', 'fee'])
             ->whereBetween('mulai', [$dari->startOfDay(), $sampai->endOfDay()])
             ->orderBy('mulai')
             ->get();
@@ -386,7 +401,18 @@ class AdminController extends Controller
             'dikirim_pada' => now(),
         ]);
 
+        ActivityLog::record('sent', "Tandai terkirim notifikasi WA ID {$notif->id}", 'NotifikasiWa', $notif->id);
+
         return back()->with('success', 'Notifikasi ditandai terkirim.');
+    }
+
+    public function destroyNotifikasi(NotifikasiWa $notif)
+    {
+        $notif->delete();
+
+        ActivityLog::record('delete', "Hapus notifikasi WA ID {$notif->id}", 'NotifikasiWa', $notif->id);
+
+        return back()->with('success', 'Notifikasi dihapus.');
     }
 
     // ---- Koreksi presensi ----
@@ -572,5 +598,16 @@ class AdminController extends Controller
         $tutor->mataPelajaran()->sync($data['mata_pelajaran'] ?? []);
 
         return back()->with('success', 'Mata pelajaran tutor diperbarui.');
+    }
+
+    // ---- Activity Log ----
+
+    public function activityLog(): Response
+    {
+        return Inertia::render('Admin/ActivityLog', [
+            'logs' => ActivityLog::with('user:id,name')
+                ->latest()
+                ->paginate(25),
+        ]);
     }
 }
