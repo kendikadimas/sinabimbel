@@ -2,7 +2,7 @@ import { Button, Field, inputClass } from '@/Components/ui';
 import InputError from '@/Components/InputError';
 import { Transition } from '@headlessui/react';
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, UserRound } from 'lucide-react';
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
