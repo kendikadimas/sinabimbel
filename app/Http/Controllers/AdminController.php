@@ -274,8 +274,10 @@ class AdminController extends Controller
 
     public function destroySiswa(Siswa $siswa)
     {
-        // Soft-delete child records first to avoid FK constraint violation
-        NotifikasiWa::where('siswa_id', $siswa->id)->delete();
+        // Hard-delete all child records first (FK constraints in prod)
+        \DB::table('notifikasi_wa')->where('siswa_id', $siswa->id)->delete();
+        \DB::table('presensi')->where('siswa_id', $siswa->id)->delete();
+        \DB::table('paket_sesi')->where('siswa_id', $siswa->id)->delete();
         $siswa->delete();
 
         ActivityLog::record('delete', "Hapus siswa: {$siswa->nama}", 'Siswa', $siswa->id);
