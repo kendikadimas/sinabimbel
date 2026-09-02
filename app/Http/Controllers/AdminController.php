@@ -122,10 +122,6 @@ class AdminController extends Controller
 
     public function destroyTutor(User $tutor)
     {
-        if ($tutor->presensi()->exists()) {
-            return back()->withErrors(['tutor' => 'Tutor memiliki data presensi, tidak dapat dihapus.']);
-        }
-
         $tutor->delete();
 
         ActivityLog::record('delete', "Hapus tutor: {$tutor->name}", 'Tutor', $tutor->id);
