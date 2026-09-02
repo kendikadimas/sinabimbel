@@ -1,3 +1,5 @@
+import { Children } from 'react';
+
 export function PageHeader({ icon: Icon, title, desc, eyebrow, action, gradient = 'from-blue-600 via-indigo-600 to-blue-700' }) {
     return (
         <div
@@ -189,7 +191,7 @@ export function Table({ head, children, empty }) {
                 </thead>
                 <tbody className="divide-y divide-slate-100 bg-white">
                     {children}
-                    {empty && (
+                    {empty && Children.count(children) === 0 && (
                         <tr>
                             <td
                                 colSpan={head.length}
