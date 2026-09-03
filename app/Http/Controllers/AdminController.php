@@ -496,7 +496,7 @@ class AdminController extends Controller
                 $p->siswa->nama,
                 $p->siswa->kelas,
                 $p->siswa->mata_pelajaran,
-                $p->tanggal_mulai->format('d M Y'),
+                \Carbon\Carbon::parse($p->tanggal_mulai)->format('d M Y'),
                 $p->jumlah_sesi,
                 $p->sisa_sesi,
                 $p->status_bayar->label(),
